@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
+import "./DynamicNFT.sol";
+
 contract Case {
     struct Campaign {
         string name;
@@ -21,6 +23,8 @@ contract Case {
         string nftTokenId;
         uint userNFTClaimedAt;
         uint authorityNFTClaimedAt;
+        string rejectReason;
+        string notCompletedReason;
     }
     struct Location {
         string latitude;
@@ -47,7 +51,8 @@ contract Case {
         uint indexed _campaignId,
         string _status,
         address _assignedAuthority,
-        uint _verificationTimeStamp
+        uint _verificationTimeStamp,
+        string _rejectReason
     );
 
     event LogCampaignResolved(
@@ -63,7 +68,8 @@ contract Case {
         string _imageProof,
         string _completionImageProof,
         string _status,
-        uint _completionTimeStamp
+        uint _completionTimeStamp,
+        string _notCompletedReason
     );
 
     function createCampaign(
@@ -96,7 +102,9 @@ contract Case {
             false,
             "",
             0,
-            0
+            0,
+            "",
+            ""
         );
         userCampaigns[msg.sender].push(campaignId);
         emit LogCampaignCreated(
@@ -127,12 +135,20 @@ contract Case {
                     keccak256(abi.encodePacked("rejected"))
                 ) {
                     campaign.status = _status;
+                    if(
+                        keccak256(abi.encodePacked(_status)) ==
+                        keccak256(abi.encodePacked("rejected"))
+                    )
+                    {
+                        campaign.rejectReason = _status;
+                    }
                     campaign.verificationTimeStamp = block.timestamp;
                     emit LogCampaignVerified(
                         _campaignId,
                         _status,
                         campaign.assignedAuthority,
-                        block.timestamp
+                        block.timestamp,
+                        campaign.rejectReason
                     );
                 }
             }
@@ -177,13 +193,21 @@ contract Case {
                 keccak256(abi.encodePacked("notCompleted"))
             ) {
                 campaign.status = _status;
+                if(
+                    keccak256(abi.encodePacked(_status)) ==
+                    keccak256(abi.encodePacked("notCompleted"))
+                )
+                {
+                    campaign.notCompletedReason = _status;
+                }
                 campaign.completionTimeStamp = block.timestamp;
                 emit LogCampaignCompleted(
                     _campaignId,
                     campaign.imageProof,
                     campaign.completionImageProof,
                     _status,
-                    block.timestamp
+                    block.timestamp,
+                    campaign.notCompletedReason
                 );
             }
         }
@@ -472,17 +496,27 @@ contract Case {
         return rejectedCampaigns;
     }
 
-    function claimNftByUserOnCampaignVerification(uint _campaignId) public {
+    function claimNftByUserOnCampaignVerification(
+        uint _campaignId,
+        DynamicNFT _dynamicNFT
+    ) public {
         Campaign storage campaign = campaigns[_campaignId];
         if (
             keccak256(abi.encodePacked(campaign.status)) ==
             keccak256(abi.encodePacked("verified")) &&
-            campaign.userNFTClaimed == false
+            !campaign.userNFTClaimed
         ) {
+            _dynamicNFT.mint(
+                _campaignId,
+                campaign.name,
+                campaign.description,
+                campaign.imageProof
+            );
             campaign.userNFTClaimed = true;
             campaign.userNFTClaimedAt = block.timestamp;
             // nft.mint(msg.sender, _campaignId);
-            // campaign.nftTokenId = TOKENID;
+            campaign.nftTokenId = _campaignId;
+            // DynamicNFT _dynamicNFT;
         } else {
             revert("Campaign is not verified yet or nft already claimed");
         }
