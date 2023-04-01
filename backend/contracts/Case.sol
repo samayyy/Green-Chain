@@ -65,6 +65,13 @@ contract Case {
             "pending",
             _location
         );
+        // Authorities authoritiesContract = Authorities(
+        //     "0x5B38Da6a701c568545dCfcB03FcB875f56beddC4"
+        // );
+        // address authority = authoritiesContract.call(
+        //     bytes4(keccak256("assignCampaignToAuthority(uint256)")),
+        //     campaignId
+        // );
     }
 
     function verifyCampaign(uint _campaignId, string memory _status) public {
@@ -281,5 +288,34 @@ contract Case {
             }
         }
         return completedCampaigns;
+    }
+}
+
+contract Authorities {
+    struct Authority {
+        address addr;
+        string name;
+        string location;
+    }
+
+    mapping(uint => Authority) public authorities;
+    uint public length;
+
+    function addAuthority(
+        address _addr,
+        string memory _name,
+        string memory _location
+    ) public {
+        uint id = length++;
+        authorities[id] = Authority(_addr, _name, _location);
+    }
+
+    function assignCampaignToAuthority(
+        uint _campaignId
+    ) public view returns (address) {
+        uint authorityId = uint(
+            keccak256(abi.encodePacked(block.timestamp, _campaignId))
+        ) % length;
+        return authorities[authorityId].addr;
     }
 }
