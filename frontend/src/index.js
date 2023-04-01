@@ -6,25 +6,16 @@ import reportWebVitals from "./reportWebVitals";
 // Context
 import { AuthContextProvider } from "./context/auth-context";
 import { AlertContextProvider } from "./context/alert-context";
-import { MoralisProvider } from "react-moralis";
-import { NotificationProvider } from "web3uikit";
-import DataState from "./context/DataContext/dataState";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <MoralisProvider initializeOnMount={false}>
-    <NotificationProvider>
-      <DataState>
-        <AuthContextProvider>
-          <AlertContextProvider>
-            <React.StrictMode>
-              <App />
-            </React.StrictMode>
-          </AlertContextProvider>
-        </AuthContextProvider>
-      </DataState>
-    </NotificationProvider>
-  </MoralisProvider>
+  <AuthContextProvider>
+    <AlertContextProvider>
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    </AlertContextProvider>
+  </AuthContextProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function
