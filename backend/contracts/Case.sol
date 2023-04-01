@@ -504,6 +504,27 @@ contract Case {
             revert("Campaign is not completed yet or nft already claimed");
         }
     }
+
+    function getAllNftTokenIdOfUserOrAuthority()
+        public
+        view
+        returns (uint[] memory)
+    {
+        uint[] memory tokenIds = new uint[](userCampaigns[msg.sender].length);
+        uint i = 0;
+        for (uint j = 0; j < userCampaigns[msg.sender].length; j++) {
+            uint campaignId = userCampaigns[msg.sender][j];
+            Campaign storage campaign = campaigns[campaignId];
+            if (
+                campaign.nftTokenId != 0 &&
+                (campaign.userNFTClaimed || campaign.authorityNFTClaimed)
+            ) {
+                tokenIds[i] = campaign.nftTokenId;
+                i++;
+            }
+        }
+        return tokenIds;
+    }
 }
 
 contract Authorities {
