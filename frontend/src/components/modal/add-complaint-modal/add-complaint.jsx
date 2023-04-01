@@ -41,7 +41,7 @@ function AddComplaint(props) {
         props.setShow(false);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [navError])
+  }, [navError, props.show])
   
 
   const handleIssueTypeChange = (event) => {
