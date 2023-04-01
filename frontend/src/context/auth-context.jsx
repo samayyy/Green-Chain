@@ -30,7 +30,6 @@ export const AuthContextProvider = (props) => {
   };
 
   const setUserDataHandler = (userDataInput) => {
-    console.log("User Data got after email entered:", userDataInput);
     setUserData(userDataInput);
   };
 

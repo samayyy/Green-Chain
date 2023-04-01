@@ -28,8 +28,8 @@ function NavBar() {
               </Offcanvas.Header>
               <Offcanvas.Body>
                 <Nav className="justify-content-end flex-grow-1 pe-3">
-                  <Nav.Link href="/home">Home</Nav.Link>
-                  <Nav.Link href="/authority">Authority</Nav.Link>
+                  <Nav.Link href="/user-home">Home</Nav.Link>
+                  {/* <Nav.Link href="/authority">Authority</Nav.Link> */}
                   <NavDropdown
                     title="Reports"
                     id={`offcanvasNavbarDropdown-expand-${expand}`}

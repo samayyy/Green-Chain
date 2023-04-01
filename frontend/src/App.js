@@ -21,7 +21,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           {/* Layout 1 */}
-            <Route path="/home" element={<Layout1 ><Home /></Layout1>} />
+            <Route path="/user-home" element={<Layout1 ><Home /></Layout1>} />
         </Routes>
       </BrowserRouter>
     </div>
