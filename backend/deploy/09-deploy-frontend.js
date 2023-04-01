@@ -15,7 +15,7 @@ module.exports = async () => {
 };
 
 async function updateAbi() {
-  const myContract = await ethers.getContract("Lock");
+  const myContract = await ethers.getContract("Case");
   fs.writeFileSync(
     frontEndAbiFile,
     myContract.interface.format(ethers.utils.FormatTypes.json)
@@ -23,7 +23,7 @@ async function updateAbi() {
 }
 
 async function updateContractAddresses() {
-  const myContract = await ethers.getContract("Lock");
+  const myContract = await ethers.getContract("Case");
   const contractAddresses = JSON.parse(
     fs.readFileSync(frontEndContractsFile, "utf8")
   );
