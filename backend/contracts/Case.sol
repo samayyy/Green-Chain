@@ -8,50 +8,71 @@ contract Case {
         string imageProof;
         string status;
         string completionImageProof;
-        string location;
+        Location location;
         address assignedAuthority;
+        string issueType;
+        string addressString;
+        uint creationTimeStamp;
+        uint completionTimeStamp;
+        uint verificationTimeStamp;
+        uint resolutionTimeStamp;
+        bool userNFTClaimed;
+        bool authorityNFTClaimed;
+        string nftTokenId;
+        uint userNFTClaimedAt;
+        uint authorityNFTClaimedAt;
+    }
+    struct Location {
+        string latitude;
+        string longitude;
     }
 
     mapping(uint => Campaign) public campaigns;
     uint public length;
     mapping(address => uint[]) public userCampaigns;
-
     event LogCampaignCreated(
         uint indexed _campaignId,
         string _name,
         string _description,
         string _imageProof,
         string _status,
-        string _location,
-        address _assignedAuthority
+        Location _location,
+        address _assignedAuthority,
+        string _issueType,
+        string _addressString,
+        uint _creationTimeStamp
     );
 
     event LogCampaignVerified(
         uint indexed _campaignId,
         string _status,
-        address _assignedAuthority
+        address _assignedAuthority,
+        uint _verificationTimeStamp
     );
 
     event LogCampaignResolved(
         uint indexed _campaignId,
         string _status,
         string _completionImageProof,
-        string location
+        Location location,
+        uint _resolutionTimeStamp
     );
 
     event LogCampaignCompleted(
         uint indexed _campaignId,
         string _imageProof,
         string _completionImageProof,
-        string _status
+        string _status,
+        uint _completionTimeStamp
     );
 
     function createCampaign(
-        address _userAddress,
         string memory _name,
         string memory _description,
         string memory _imageProof,
-        string memory _location,
+        Location memory _location,
+        string memory _addressString,
+        string memory _issueType,
         Authorities _authoritiesContract
     ) public {
         uint campaignId = length++;
@@ -64,9 +85,20 @@ contract Case {
             "pending",
             "",
             _location,
-            assignedAuthority
+            assignedAuthority,
+            _issueType,
+            _addressString,
+            block.timestamp,
+            0,
+            0,
+            0,
+            false,
+            false,
+            "",
+            0,
+            0
         );
-        userCampaigns[_userAddress].push(campaignId);
+        userCampaigns[msg.sender].push(campaignId);
         emit LogCampaignCreated(
             campaignId,
             _name,
@@ -74,7 +106,10 @@ contract Case {
             _imageProof,
             "pending",
             _location,
-            assignedAuthority
+            assignedAuthority,
+            _issueType,
+            _addressString,
+            block.timestamp
         );
     }
 
@@ -91,10 +126,13 @@ contract Case {
                     keccak256(abi.encodePacked(_status)) ==
                     keccak256(abi.encodePacked("rejected"))
                 ) {
+                    campaign.status = _status;
+                    campaign.verificationTimeStamp = block.timestamp;
                     emit LogCampaignVerified(
                         _campaignId,
                         _status,
-                        campaign.assignedAuthority
+                        campaign.assignedAuthority,
+                        block.timestamp
                     );
                 }
             }
@@ -104,7 +142,7 @@ contract Case {
     function resolveCampaign(
         uint _campaignId,
         string memory _completionImageProof,
-        string memory _location
+        Location memory _location
     ) public {
         Campaign storage campaign = campaigns[_campaignId];
         if (
@@ -113,12 +151,14 @@ contract Case {
         ) {
             if (campaign.assignedAuthority == msg.sender) {
                 campaign.status = "resolved";
+                campaign.resolutionTimeStamp = block.timestamp;
                 campaign.completionImageProof = _completionImageProof;
                 emit LogCampaignResolved(
                     _campaignId,
                     "resolved",
                     _completionImageProof,
-                    _location
+                    _location,
+                    block.timestamp
                 );
             }
         }
@@ -136,254 +176,332 @@ contract Case {
                 keccak256(abi.encodePacked(_status)) ==
                 keccak256(abi.encodePacked("notCompleted"))
             ) {
+                campaign.status = _status;
+                campaign.completionTimeStamp = block.timestamp;
                 emit LogCampaignCompleted(
                     _campaignId,
                     campaign.imageProof,
                     campaign.completionImageProof,
-                    _status
+                    _status,
+                    block.timestamp
                 );
             }
         }
     }
 
-    function getUserPendingCampaigns() public view returns (uint[] memory) {
-        uint[] memory pendingCampaigns = new uint[](
+    function getPendingCampaignsByUser()
+        public
+        view
+        returns (Campaign[] memory)
+    {
+        Campaign[] memory pendingCampaigns = new Campaign[](
             userCampaigns[msg.sender].length
         );
-        for (uint i = 0; i < userCampaigns[msg.sender].length; i++) {
-            Campaign storage campaign = campaigns[userCampaigns[msg.sender][i]];
+        uint i = 0;
+        for (uint j = 0; j < userCampaigns[msg.sender].length; j++) {
+            uint campaignId = userCampaigns[msg.sender][j];
+            Campaign storage campaign = campaigns[campaignId];
             if (
                 keccak256(abi.encodePacked(campaign.status)) ==
                 keccak256(abi.encodePacked("pending"))
             ) {
-                pendingCampaigns[i] = userCampaigns[msg.sender][i];
+                pendingCampaigns[i] = campaign;
+                i++;
             }
         }
         return pendingCampaigns;
     }
 
-    function getUserVerifiedCampaigns() public view returns (uint[] memory) {
-        uint[] memory verifiedCampaigns = new uint[](
+    function getVerifiedCampaignsByUser()
+        public
+        view
+        returns (Campaign[] memory)
+    {
+        Campaign[] memory verifiedCampaigns = new Campaign[](
             userCampaigns[msg.sender].length
         );
-        for (uint i = 0; i < userCampaigns[msg.sender].length; i++) {
-            Campaign storage campaign = campaigns[userCampaigns[msg.sender][i]];
+        uint i = 0;
+        for (uint j = 0; j < userCampaigns[msg.sender].length; j++) {
+            uint campaignId = userCampaigns[msg.sender][j];
+            Campaign storage campaign = campaigns[campaignId];
             if (
                 keccak256(abi.encodePacked(campaign.status)) ==
-                keccak256(abi.encodePacked("pending"))
+                keccak256(abi.encodePacked("verified"))
             ) {
-                verifiedCampaigns[i] = userCampaigns[msg.sender][i];
+                verifiedCampaigns[i] = campaign;
+                i++;
             }
         }
         return verifiedCampaigns;
     }
 
-    function getUserResolvedCampaigns() public view returns (uint[] memory) {
-        uint[] memory resolvedCampaigns = new uint[](
+    function getResolvedCampaignsByUser()
+        public
+        view
+        returns (Campaign[] memory)
+    {
+        Campaign[] memory resolvedCampaigns = new Campaign[](
             userCampaigns[msg.sender].length
         );
-        for (uint i = 0; i < userCampaigns[msg.sender].length; i++) {
-            Campaign storage campaign = campaigns[userCampaigns[msg.sender][i]];
+        uint i = 0;
+        for (uint j = 0; j < userCampaigns[msg.sender].length; j++) {
+            uint campaignId = userCampaigns[msg.sender][j];
+            Campaign storage campaign = campaigns[campaignId];
             if (
                 keccak256(abi.encodePacked(campaign.status)) ==
                 keccak256(abi.encodePacked("resolved"))
             ) {
-                resolvedCampaigns[i] = userCampaigns[msg.sender][i];
+                resolvedCampaigns[i] = campaign;
+                i++;
             }
         }
         return resolvedCampaigns;
     }
 
-    function getUserCompletedCampaigns() public view returns (uint[] memory) {
-        uint[] memory completedCampaigns = new uint[](
+    function getCompletedCampaignsByUser()
+        public
+        view
+        returns (Campaign[] memory)
+    {
+        Campaign[] memory completedCampaigns = new Campaign[](
             userCampaigns[msg.sender].length
         );
-        for (uint i = 0; i < userCampaigns[msg.sender].length; i++) {
-            Campaign storage campaign = campaigns[userCampaigns[msg.sender][i]];
+        uint i = 0;
+        for (uint j = 0; j < userCampaigns[msg.sender].length; j++) {
+            uint campaignId = userCampaigns[msg.sender][j];
+            Campaign storage campaign = campaigns[campaignId];
             if (
                 keccak256(abi.encodePacked(campaign.status)) ==
                 keccak256(abi.encodePacked("completed"))
             ) {
-                completedCampaigns[i] = userCampaigns[msg.sender][i];
+                completedCampaigns[i] = campaign;
+                i++;
             }
         }
         return completedCampaigns;
     }
 
-    function getUserNotCompletedCampaigns()
+    function getNotCompletedCampaignsByUser()
         public
         view
-        returns (uint[] memory)
+        returns (Campaign[] memory)
     {
-        uint[] memory notCompletedCampaigns = new uint[](
+        Campaign[] memory notCompletedCampaigns = new Campaign[](
             userCampaigns[msg.sender].length
         );
-        for (uint i = 0; i < userCampaigns[msg.sender].length; i++) {
-            Campaign storage campaign = campaigns[userCampaigns[msg.sender][i]];
+        uint i = 0;
+        for (uint j = 0; j < userCampaigns[msg.sender].length; j++) {
+            uint campaignId = userCampaigns[msg.sender][j];
+            Campaign storage campaign = campaigns[campaignId];
             if (
                 keccak256(abi.encodePacked(campaign.status)) ==
                 keccak256(abi.encodePacked("notCompleted"))
             ) {
-                notCompletedCampaigns[i] = userCampaigns[msg.sender][i];
+                notCompletedCampaigns[i] = campaign;
+                i++;
             }
         }
         return notCompletedCampaigns;
     }
 
-    function getAllPendingCampaigns() public view returns (uint[] memory) {
-        uint[] memory pendingCampaigns = new uint[](length);
-        for (uint i = 0; i < length; i++) {
-            Campaign storage campaign = campaigns[i];
-            if (
-                keccak256(abi.encodePacked(campaign.status)) ==
-                keccak256(abi.encodePacked("pending"))
-            ) {
-                pendingCampaigns[i] = i;
-            }
-        }
-        return pendingCampaigns;
-    }
-
-    function getAllVerifiedCampaigns() public view returns (uint[] memory) {
-        uint[] memory verifiedCampaigns = new uint[](length);
-        for (uint i = 0; i < length; i++) {
-            Campaign storage campaign = campaigns[i];
-            if (
-                keccak256(abi.encodePacked(campaign.status)) ==
-                keccak256(abi.encodePacked("verified"))
-            ) {
-                verifiedCampaigns[i] = i;
-            }
-        }
-        return verifiedCampaigns;
-    }
-
-    function getAllResolvedCampaigns() public view returns (uint[] memory) {
-        uint[] memory resolvedCampaigns = new uint[](length);
-        for (uint i = 0; i < length; i++) {
-            Campaign storage campaign = campaigns[i];
-            if (
-                keccak256(abi.encodePacked(campaign.status)) ==
-                keccak256(abi.encodePacked("resolved"))
-            ) {
-                resolvedCampaigns[i] = i;
-            }
-        }
-        return resolvedCampaigns;
-    }
-
-    function getAllCompletedCampaigns() public view returns (uint[] memory) {
-        uint[] memory completedCampaigns = new uint[](length);
-        for (uint i = 0; i < length; i++) {
-            Campaign storage campaign = campaigns[i];
-            if (
-                keccak256(abi.encodePacked(campaign.status)) ==
-                keccak256(abi.encodePacked("completed"))
-            ) {
-                completedCampaigns[i] = i;
-            }
-        }
-        return completedCampaigns;
-    }
-
-    // get All Pending Campaigns of a authority
-    function getAuthorityPendingCampaigns()
+    // get rejected campaigns by user
+    function getRejectedCampaignsByUser()
         public
         view
-        returns (uint[] memory)
+        returns (Campaign[] memory)
     {
-        uint[] memory pendingCampaigns = new uint[](length);
-        for (uint i = 0; i < length; i++) {
-            Campaign storage campaign = campaigns[i];
+        Campaign[] memory rejectedCampaigns = new Campaign[](
+            userCampaigns[msg.sender].length
+        );
+        uint i = 0;
+        for (uint j = 0; j < userCampaigns[msg.sender].length; j++) {
+            uint campaignId = userCampaigns[msg.sender][j];
+            Campaign storage campaign = campaigns[campaignId];
+            if (
+                keccak256(abi.encodePacked(campaign.status)) ==
+                keccak256(abi.encodePacked("rejected"))
+            ) {
+                rejectedCampaigns[i] = campaign;
+                i++;
+            }
+        }
+        return rejectedCampaigns;
+    }
+
+    function getPendingCampaignsByAuthority()
+        public
+        view
+        returns (Campaign[] memory)
+    {
+        Campaign[] memory pendingCampaigns = new Campaign[](
+            userCampaigns[msg.sender].length
+        );
+        uint i = 0;
+        for (uint j = 0; j < userCampaigns[msg.sender].length; j++) {
+            uint campaignId = userCampaigns[msg.sender][j];
+            Campaign storage campaign = campaigns[campaignId];
             if (
                 keccak256(abi.encodePacked(campaign.status)) ==
                 keccak256(abi.encodePacked("pending")) &&
                 campaign.assignedAuthority == msg.sender
             ) {
-                pendingCampaigns[i] = i;
+                pendingCampaigns[i] = campaign;
+                i++;
             }
         }
         return pendingCampaigns;
     }
 
-    // get All Verified Campaigns of a authority
-    function getAuthorityVerifiedCampaigns()
+    function getVerifiedCampaignsByAuthority()
         public
         view
-        returns (uint[] memory)
+        returns (Campaign[] memory)
     {
-        uint[] memory verifiedCampaigns = new uint[](length);
-        for (uint i = 0; i < length; i++) {
-            Campaign storage campaign = campaigns[i];
+        Campaign[] memory verifiedCampaigns = new Campaign[](
+            userCampaigns[msg.sender].length
+        );
+        uint i = 0;
+        for (uint j = 0; j < userCampaigns[msg.sender].length; j++) {
+            uint campaignId = userCampaigns[msg.sender][j];
+            Campaign storage campaign = campaigns[campaignId];
             if (
                 keccak256(abi.encodePacked(campaign.status)) ==
                 keccak256(abi.encodePacked("verified")) &&
                 campaign.assignedAuthority == msg.sender
             ) {
-                verifiedCampaigns[i] = i;
+                verifiedCampaigns[i] = campaign;
+                i++;
             }
         }
         return verifiedCampaigns;
     }
 
-    // get All Resolved Campaigns of a authority
-    function getAuthorityResolvedCampaigns()
+    function getResolvedCampaignsByAuthority()
         public
         view
-        returns (uint[] memory)
+        returns (Campaign[] memory)
     {
-        uint[] memory resolvedCampaigns = new uint[](length);
-        for (uint i = 0; i < length; i++) {
-            Campaign storage campaign = campaigns[i];
+        Campaign[] memory resolvedCampaigns = new Campaign[](
+            userCampaigns[msg.sender].length
+        );
+        uint i = 0;
+        for (uint j = 0; j < userCampaigns[msg.sender].length; j++) {
+            uint campaignId = userCampaigns[msg.sender][j];
+            Campaign storage campaign = campaigns[campaignId];
             if (
                 keccak256(abi.encodePacked(campaign.status)) ==
                 keccak256(abi.encodePacked("resolved")) &&
                 campaign.assignedAuthority == msg.sender
             ) {
-                resolvedCampaigns[i] = i;
+                resolvedCampaigns[i] = campaign;
+                i++;
             }
         }
         return resolvedCampaigns;
     }
 
-    // get All Completed Campaigns of a authority
-    function getAuthorityCompletedCampaigns()
+    function getCompletedCampaignsByAuthority()
         public
         view
-        returns (uint[] memory)
+        returns (Campaign[] memory)
     {
-        uint[] memory completedCampaigns = new uint[](length);
-        for (uint i = 0; i < length; i++) {
-            Campaign storage campaign = campaigns[i];
+        Campaign[] memory completedCampaigns = new Campaign[](
+            userCampaigns[msg.sender].length
+        );
+        uint i = 0;
+        for (uint j = 0; j < userCampaigns[msg.sender].length; j++) {
+            uint campaignId = userCampaigns[msg.sender][j];
+            Campaign storage campaign = campaigns[campaignId];
             if (
                 keccak256(abi.encodePacked(campaign.status)) ==
                 keccak256(abi.encodePacked("completed")) &&
                 campaign.assignedAuthority == msg.sender
             ) {
-                completedCampaigns[i] = i;
+                completedCampaigns[i] = campaign;
+                i++;
             }
         }
         return completedCampaigns;
     }
 
-    // get All Not Completed Campaigns of a authority
-    function getAuthorityNotCompletedCampaigns()
+    function getNotCompletedCampaignsByAuthority()
         public
         view
-        returns (uint[] memory)
+        returns (Campaign[] memory)
     {
-        uint[] memory notCompletedCampaigns = new uint[](length);
-        for (uint i = 0; i < length; i++) {
-            Campaign storage campaign = campaigns[i];
+        Campaign[] memory notCompletedCampaigns = new Campaign[](
+            userCampaigns[msg.sender].length
+        );
+        uint i = 0;
+        for (uint j = 0; j < userCampaigns[msg.sender].length; j++) {
+            uint campaignId = userCampaigns[msg.sender][j];
+            Campaign storage campaign = campaigns[campaignId];
             if (
                 keccak256(abi.encodePacked(campaign.status)) ==
                 keccak256(abi.encodePacked("notCompleted")) &&
                 campaign.assignedAuthority == msg.sender
             ) {
-                notCompletedCampaigns[i] = i;
+                notCompletedCampaigns[i] = campaign;
+                i++;
             }
         }
         return notCompletedCampaigns;
+    }
+
+    function getRejectedCampaignsByAuthority()
+        public
+        view
+        returns (Campaign[] memory)
+    {
+        Campaign[] memory rejectedCampaigns = new Campaign[](
+            userCampaigns[msg.sender].length
+        );
+        uint i = 0;
+        for (uint j = 0; j < userCampaigns[msg.sender].length; j++) {
+            uint campaignId = userCampaigns[msg.sender][j];
+            Campaign storage campaign = campaigns[campaignId];
+            if (
+                keccak256(abi.encodePacked(campaign.status)) ==
+                keccak256(abi.encodePacked("rejected")) &&
+                campaign.assignedAuthority == msg.sender
+            ) {
+                rejectedCampaigns[i] = campaign;
+                i++;
+            }
+        }
+        return rejectedCampaigns;
+    }
+
+    function claimNftByUserOnCampaignVerification(uint _campaignId) public {
+        Campaign storage campaign = campaigns[_campaignId];
+        if (
+            keccak256(abi.encodePacked(campaign.status)) ==
+            keccak256(abi.encodePacked("verified")) &&
+            campaign.userNFTClaimed == false
+        ) {
+            campaign.userNFTClaimed = true;
+            campaign.userNFTClaimedAt = block.timestamp;
+            // nft.mint(msg.sender, _campaignId);
+            // campaign.nftTokenId = TOKENID;
+        } else {
+            revert("Campaign is not verified yet or nft already claimed");
+        }
+    }
+
+    function claimNftByAuthorityOnCampaignCompletion(uint _campaignId) public {
+        Campaign storage campaign = campaigns[_campaignId];
+        if (
+            keccak256(abi.encodePacked(campaign.status)) ==
+            keccak256(abi.encodePacked("completed")) &&
+            campaign.authorityNFTClaimed == false
+        ) {
+            campaign.authorityNFTClaimed = true;
+            campaign.authorityNFTClaimedAt = block.timestamp;
+            // nft.mint(msg.sender, _campaignId);
+            // campaign.nftTokenId = TOKENID;
+        } else {
+            revert("Campaign is not completed yet or nft already claimed");
+        }
     }
 }
 
@@ -391,15 +509,24 @@ contract Authorities {
     struct Authority {
         address addr;
         string name;
-        string location;
+        Location location;
+        string designation;
+    }
+    struct Location {
+        string latitude;
+        string longitude;
     }
 
     mapping(uint => Authority) public authorities;
     uint public length;
 
-    function addAuthority(string memory _name, string memory _location) public {
+    function addAuthority(
+        string memory _name,
+        Location memory _location,
+        string memory _designation
+    ) public {
         uint id = length++;
-        authorities[id] = Authority(msg.sender, _name, _location);
+        authorities[id] = Authority(msg.sender, _name, _location, _designation);
     }
 
     function assignCampaignToAuthority(
@@ -425,11 +552,15 @@ contract Authorities {
     function getAuthorityDetails()
         public
         view
-        returns (string memory, string memory)
+        returns (string memory, Location memory, string memory)
     {
         for (uint i = 0; i < length; i++) {
             if (authorities[i].addr == msg.sender) {
-                return (authorities[i].name, authorities[i].location);
+                return (
+                    authorities[i].name,
+                    authorities[i].location,
+                    authorities[i].designation
+                );
             }
         }
     }
