@@ -1,0 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Alkatra&display=swap');
+
+.login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    min-height: 100vh;
+    flex-wrap: wrap;
+}
+
+.login-desc {
+    font-family: 'Alkatra', cursive;
+}
+
+.welcomeImage {
+    height: 12rem;
+    width: 10rem;
+    margin-bottom: 1rem;
+}
