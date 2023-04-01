@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Form, Button, Col, Row, Modal, Container } from "react-bootstrap";
 
 function AddComplaint(props) {
@@ -10,6 +10,25 @@ function AddComplaint(props) {
   const [town, setTown] = useState("");
   const [date, setDate] = useState("");
   const [image, setImage] = useState(null);
+
+  const [location, setLocation] = useState(null);
+  useEffect(() => {
+    if (props.show) {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            setLocation(position.coords);
+            // console.log(position);
+          },
+          (error) => {
+            console.log(error.message);
+          }
+        );
+      } else {
+        console.log("Geolocation is not supported by this browser.");
+      }
+    }
+  }, [props.show]);
 
   const handleIssueTypeChange = (event) => {
     setIssueType(event.target.value);
@@ -48,6 +67,7 @@ function AddComplaint(props) {
       city,
       town,
       date,
+      location
     };
     // Handle form submission here
     console.log(formData);
