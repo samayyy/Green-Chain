@@ -18,7 +18,7 @@ contract Case {
         uint resolutionTimeStamp;
         bool userNFTClaimed;
         bool authorityNFTClaimed;
-        string nftTokenId;
+        uint nftTokenId;
         uint userNFTClaimedAt;
         uint authorityNFTClaimedAt;
     }
@@ -94,7 +94,7 @@ contract Case {
             0,
             false,
             false,
-            "",
+            0,
             0,
             0
         );
@@ -481,8 +481,9 @@ contract Case {
         ) {
             campaign.userNFTClaimed = true;
             campaign.userNFTClaimedAt = block.timestamp;
+
             // nft.mint(msg.sender, _campaignId);
-            // campaign.nftTokenId = TOKENID;
+            campaign.nftTokenId = _campaignId;
         } else {
             revert("Campaign is not verified yet or nft already claimed");
         }
@@ -498,7 +499,7 @@ contract Case {
             campaign.authorityNFTClaimed = true;
             campaign.authorityNFTClaimedAt = block.timestamp;
             // nft.mint(msg.sender, _campaignId);
-            // campaign.nftTokenId = TOKENID;
+            campaign.nftTokenId = _campaignId;
         } else {
             revert("Campaign is not completed yet or nft already claimed");
         }
