@@ -1,13 +1,23 @@
+import { useState } from "react";
 import { Container, Row, Col, Image, Accordion, Button } from "react-bootstrap";
 import "./home.css";
+// Modal Component
+import AddComplaint from "../../components/modal/add-complaint-modal/add-complaint";
+
 const quoteImage =
   "https://www.wallquotes.com/sites/default/files/insp0002_1.png";
 const garbageImage =
   "https://cdni.iconscout.com/illustration/premium/thumb/garbage-collector-transporting-waste-to-recycle-6021076-4991310.png";
 
 function Home() {
+  const [show, setShow] = useState(false);
+  function registerComplaint() {
+    setShow(true);
+  }
+
   return (
     <div className="App-Child">
+      <AddComplaint show={show} setShow={setShow} />
       <Container fluid>
         <Row className="mt-5 home-hero">
           <Col
@@ -43,7 +53,12 @@ function Home() {
               md={6}
               className="d-flex align-items-center justify-content-center"
             >
-              <Button variant="primary" size="lg" className="my-2">
+              <Button
+                variant="primary"
+                size="lg"
+                className="my-2"
+                onClick={registerComplaint}
+              >
                 Report an Event
               </Button>{" "}
             </Col>

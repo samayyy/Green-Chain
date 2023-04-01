@@ -12,7 +12,7 @@ module.exports = async function (hre) {
   const chainId = network.config.chainId;
 
   console.log(`Deploying on ${network.name} [${chainId}]...`);
-  const myContract = await deploy("Lock", {
+  const myContract = await deploy("Case", {
     from: deployer,
     args: [], // if constructor has arguments
     log: true,
