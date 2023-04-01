@@ -37,12 +37,12 @@ function AddComplaint(props) {
 
   useEffect(() => {
     if (navError) {
-        alertContext.showAlert("danger", "Error!", `Please provide location permission to use the app!`);
-        props.setShow(false);
+      alertContext.showAlert("danger", "Error!", `Please provide location permission to use the app!`);
+      props.setShow(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navError, props.show])
-  
+
 
   const handleIssueTypeChange = (event) => {
     setIssueType(event.target.value);
@@ -81,7 +81,8 @@ function AddComplaint(props) {
       city,
       town,
       date,
-      location
+      location,
+      image
     };
     // Handle form submission here
     console.log(formData);
@@ -119,15 +120,9 @@ function AddComplaint(props) {
                 <option value="garbage">Garbage</option>
               </Form.Control>
             </Form.Group>
-            <Form.Group controlId="image">
-              <Form.Label>Image</Form.Label>
-              {/* <Form.File
-                id="custom-file"
-                label="Choose an image"
-                onChange={handleImageChange}
-                custom
-                required
-              /> */}
+            <Form.Group controlId="formFileMultiple" className="mb-3">
+              <Form.Label>Multiple files input example</Form.Label>
+              <Form.Control type="file" onChange={handleImageChange} />
             </Form.Group>
             <Form.Group controlId="description">
               <Form.Label className="my-2">Description</Form.Label>
