@@ -3,19 +3,12 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import Offcanvas from "react-bootstrap/Offcanvas";
-import { useMoralis } from "react-moralis";
 
 import { ConnectButton } from "web3uikit"
 
 import "./navbar.css"
 
 function NavBar() {
-
-  const { isWeb3Enabled, account } = useMoralis();
-  if (isWeb3Enabled) {
-    console.log("signer: ", account);
-  }
-
   return (
     <div className="navbar-pos">
       {["lg"].map((expand) => (
