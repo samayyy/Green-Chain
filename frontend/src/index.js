@@ -7,17 +7,20 @@ import reportWebVitals from "./reportWebVitals";
 import { AuthContextProvider } from "./context/auth-context";
 import { AlertContextProvider } from "./context/alert-context";
 import { MoralisProvider } from "react-moralis";
+import DataState from "./context/DataContext/dataState";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <MoralisProvider initializeOnMount={false}>
-    <AuthContextProvider>
-      <AlertContextProvider>
-        <React.StrictMode>
-          <App />
-        </React.StrictMode>
-      </AlertContextProvider>
-    </AuthContextProvider>
+    <DataState>
+      <AuthContextProvider>
+        <AlertContextProvider>
+          <React.StrictMode>
+            <App />
+          </React.StrictMode>
+        </AlertContextProvider>
+      </AuthContextProvider>
+    </DataState>
   </MoralisProvider>
 );
 

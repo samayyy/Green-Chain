@@ -40,7 +40,7 @@ function DataState({ children }) {
         onSuccess: (tx) => handleSuccess(tx),
         onError: (error) => handleError(error),
       });
-      updateUI();
+      //   updateUI();
     }
   };
 
@@ -50,7 +50,7 @@ function DataState({ children }) {
       _type: "info",
       _message: "Transaction Complete!",
     });
-    updateUI();
+    // updateUI();
   };
 
   const handleError = function (error) {
