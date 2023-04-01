@@ -16,42 +16,47 @@ function Home() {
           >
             <Image src={quoteImage} fluid />
           </Col>
-          <Col md={6}>
+          <Col
+            md={6}
+            className="d-flex align-items-center justify-content-center"
+          >
             <Image src={garbageImage} fluid />
           </Col>
         </Row>
-        <Row>
-          <Col
-            md={12}
-            className="d-flex align-items-center justify-content-center"
-          >
-            <div className="text-center">
-              <h2>Our Mission</h2>
-              <p>
-                "To create a sustainable environment for future generations by
-                reducing and managing waste."
-              </p>
-            </div>
-          </Col>
-        </Row>
-        <Row className="mt-5">
-          <Col
-            md={6}
-            className="d-flex align-items-center justify-content-center"
-          >
-            <Button variant="primary" size="lg">
-                  Report an Event
-            </Button>{" "}
-          </Col>
-          <Col
-            md={6}
-            className="d-flex align-items-center justify-content-center"
-          >
-            <Button variant="primary" size="lg">
-                  View Completed Event
-            </Button>{" "}
-          </Col>
-        </Row>
+        <div className="mission">
+          <Row>
+            <Col
+              md={12}
+              className="d-flex align-items-center justify-content-center"
+            >
+              <div className="text-center">
+                <h2>Our Mission</h2>
+                <p>
+                  "To create a sustainable environment for future generations by
+                  reducing and managing waste."
+                </p>
+              </div>
+            </Col>
+          </Row>
+          <Row className="mt-5">
+            <Col
+              md={6}
+              className="d-flex align-items-center justify-content-center"
+            >
+              <Button variant="primary" size="lg" className="my-2">
+                Report an Event
+              </Button>{" "}
+            </Col>
+            <Col
+              md={6}
+              className="d-flex align-items-center justify-content-center"
+            >
+              <Button variant="primary" size="lg" className="my-2">
+                View Completed Events
+              </Button>{" "}
+            </Col>
+          </Row>
+        </div>
         <Row className="mt-5">
           <Col
             md={12}
