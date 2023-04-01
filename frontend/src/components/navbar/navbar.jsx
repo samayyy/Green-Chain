@@ -6,11 +6,13 @@ import Offcanvas from "react-bootstrap/Offcanvas";
 
 import { ConnectButton } from "web3uikit"
 
+import "./navbar.css"
+
 function NavBar() {
   return (
-    <>
+    <div className="navbar-pos">
       {["lg"].map((expand) => (
-        <Navbar key={expand} bg="light" expand={expand} className="mb-3">
+        <Navbar key={expand} bg="light" expand={expand} className="mb-3 navbar">
           <Container fluid>
             <Navbar.Brand href="#">Garbage Collection</Navbar.Brand>
             <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-${expand}`} />
@@ -26,7 +28,7 @@ function NavBar() {
               </Offcanvas.Header>
               <Offcanvas.Body>
                 <Nav className="justify-content-end flex-grow-1 pe-3">
-                  <Nav.Link href="/">Home</Nav.Link>
+                  <Nav.Link href="/home">Home</Nav.Link>
                   <Nav.Link href="/authority">Authority</Nav.Link>
                   <NavDropdown
                     title="Reports"
@@ -44,7 +46,7 @@ function NavBar() {
           </Container>
         </Navbar>
       ))}
-    </>
+    </div>
   );
 }
 
