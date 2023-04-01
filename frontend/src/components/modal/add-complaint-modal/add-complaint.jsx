@@ -85,6 +85,7 @@ function AddComplaint(props) {
     };
     // Handle form submission here
     console.log(formData);
+    props.setShow(false);
     alertContext.showAlert("success", "Thank You!", `Complain registered successfully`);
   };
 
