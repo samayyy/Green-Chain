@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 // creating context
 const AuthContext = React.createContext({
   isLoggedIn: false,
   email: "",
+  userType: "",
+  setUserType: "",
   getUserData: {},
   setUserData: (userDataInput) => {},
   signIn: (email, password) => {},
@@ -14,24 +16,34 @@ const AuthContext = React.createContext({
 // AuthContextProvider imported in index.tsx so that AuthContext can be used in any component
 export const AuthContextProvider = (props) => {
   const [email, setEmail] = useState("");
+  const [userType, setUserType] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    if (localStorage.getItem("userType") && localStorage.getItem("userType") === "authority"){
+      setUserDataHandler("authority");
+    }
+    else {
+      setUserDataHandler("user");
+    }
+  }, [])
+  
 
   const loginHandler = (emailInput) => {
     setIsLoggedIn(true);
     setEmail(email);
-    setUserData(email);
   };
 
   const logoutHandler = () => {
     setIsLoggedIn(false);
-    setUserData(null);
+    setUserData("");
     localStorage.removeItem("userToken");
   };
 
   const setUserDataHandler = (userDataInput) => {
-    console.log("User Data got after email entered:", userDataInput);
-    setUserData(userDataInput);
+    setUserType(userDataInput);
+    localStorage.setItem("userType", userDataInput);
   };
 
   //  AuthContext is returned as Default
@@ -40,6 +52,8 @@ export const AuthContextProvider = (props) => {
       value={{
         isLoggedIn: isLoggedIn,
         email: email,
+        userType: userType,
+        setUserType: setUserType,
         setUserData: setUserDataHandler,
         getUserData: userData,
         signIn: loginHandler,
