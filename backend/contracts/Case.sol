@@ -146,101 +146,85 @@ contract Case {
         }
     }
 
-    function getUserPendingCampaigns(
-        address _userAddress
-    ) public view returns (uint[] memory) {
+    function getUserPendingCampaigns() public view returns (uint[] memory) {
         uint[] memory pendingCampaigns = new uint[](
-            userCampaigns[_userAddress].length
+            userCampaigns[msg.sender].length
         );
-        for (uint i = 0; i < userCampaigns[_userAddress].length; i++) {
-            Campaign storage campaign = campaigns[
-                userCampaigns[_userAddress][i]
-            ];
+        for (uint i = 0; i < userCampaigns[msg.sender].length; i++) {
+            Campaign storage campaign = campaigns[userCampaigns[msg.sender][i]];
             if (
                 keccak256(abi.encodePacked(campaign.status)) ==
                 keccak256(abi.encodePacked("pending"))
             ) {
-                pendingCampaigns[i] = userCampaigns[_userAddress][i];
+                pendingCampaigns[i] = userCampaigns[msg.sender][i];
             }
         }
         return pendingCampaigns;
     }
 
-    function getUserVerifiedCampaigns(
-        address _userAddress
-    ) public view returns (uint[] memory) {
+    function getUserVerifiedCampaigns() public view returns (uint[] memory) {
         uint[] memory verifiedCampaigns = new uint[](
-            userCampaigns[_userAddress].length
+            userCampaigns[msg.sender].length
         );
-        for (uint i = 0; i < userCampaigns[_userAddress].length; i++) {
-            Campaign storage campaign = campaigns[
-                userCampaigns[_userAddress][i]
-            ];
+        for (uint i = 0; i < userCampaigns[msg.sender].length; i++) {
+            Campaign storage campaign = campaigns[userCampaigns[msg.sender][i]];
             if (
                 keccak256(abi.encodePacked(campaign.status)) ==
                 keccak256(abi.encodePacked("pending"))
             ) {
-                verifiedCampaigns[i] = userCampaigns[_userAddress][i];
+                verifiedCampaigns[i] = userCampaigns[msg.sender][i];
             }
         }
         return verifiedCampaigns;
     }
 
-    function getUserResolvedCampaigns(
-        address _userAddress
-    ) public view returns (uint[] memory) {
+    function getUserResolvedCampaigns() public view returns (uint[] memory) {
         uint[] memory resolvedCampaigns = new uint[](
-            userCampaigns[_userAddress].length
+            userCampaigns[msg.sender].length
         );
-        for (uint i = 0; i < userCampaigns[_userAddress].length; i++) {
-            Campaign storage campaign = campaigns[
-                userCampaigns[_userAddress][i]
-            ];
+        for (uint i = 0; i < userCampaigns[msg.sender].length; i++) {
+            Campaign storage campaign = campaigns[userCampaigns[msg.sender][i]];
             if (
                 keccak256(abi.encodePacked(campaign.status)) ==
                 keccak256(abi.encodePacked("resolved"))
             ) {
-                resolvedCampaigns[i] = userCampaigns[_userAddress][i];
+                resolvedCampaigns[i] = userCampaigns[msg.sender][i];
             }
         }
         return resolvedCampaigns;
     }
 
-    function getUserCompletedCampaigns(
-        address _userAddress
-    ) public view returns (uint[] memory) {
+    function getUserCompletedCampaigns() public view returns (uint[] memory) {
         uint[] memory completedCampaigns = new uint[](
-            userCampaigns[_userAddress].length
+            userCampaigns[msg.sender].length
         );
-        for (uint i = 0; i < userCampaigns[_userAddress].length; i++) {
-            Campaign storage campaign = campaigns[
-                userCampaigns[_userAddress][i]
-            ];
+        for (uint i = 0; i < userCampaigns[msg.sender].length; i++) {
+            Campaign storage campaign = campaigns[userCampaigns[msg.sender][i]];
             if (
                 keccak256(abi.encodePacked(campaign.status)) ==
                 keccak256(abi.encodePacked("completed"))
             ) {
-                completedCampaigns[i] = userCampaigns[_userAddress][i];
+                completedCampaigns[i] = userCampaigns[msg.sender][i];
             }
         }
         return completedCampaigns;
     }
 
-    function getUserNotCompletedCampaigns(
-        address _userAddress
-    ) public view returns (uint[] memory) {
+    function getUserNotCompletedCampaigns()
+        public
+        view
+        returns (uint[] memory)
+    {
         uint[] memory notCompletedCampaigns = new uint[](
-            userCampaigns[_userAddress].length
+            userCampaigns[msg.sender].length
         );
-        for (uint i = 0; i < userCampaigns[_userAddress].length; i++) {
-            Campaign storage campaign = campaigns[
-                userCampaigns[_userAddress][i]
-            ];
+        for (uint i = 0; i < userCampaigns[msg.sender].length; i++) {
+            Campaign storage campaign = campaigns[userCampaigns[msg.sender][i]];
             if (
                 keccak256(abi.encodePacked(campaign.status)) ==
                 keccak256(abi.encodePacked("notCompleted"))
             ) {
-                notCompletedCampaigns[i] = userCampaigns[_userAddress][i];
+                notCompletedCampaigns[i] = userCampaigns[msg.sender][i];
             }
         }
         return notCompletedCampaigns;
@@ -301,6 +285,7 @@ contract Case {
         }
         return completedCampaigns;
     }
+
     // get All Pending Campaigns of a authority
     function getAuthorityPendingCampaigns()
         public
@@ -320,6 +305,7 @@ contract Case {
         }
         return pendingCampaigns;
     }
+
     // get All Verified Campaigns of a authority
     function getAuthorityVerifiedCampaigns()
         public
@@ -339,6 +325,7 @@ contract Case {
         }
         return verifiedCampaigns;
     }
+
     // get All Resolved Campaigns of a authority
     function getAuthorityResolvedCampaigns()
         public
@@ -358,6 +345,7 @@ contract Case {
         }
         return resolvedCampaigns;
     }
+
     // get All Completed Campaigns of a authority
     function getAuthorityCompletedCampaigns()
         public
@@ -377,6 +365,7 @@ contract Case {
         }
         return completedCampaigns;
     }
+
     // get All Not Completed Campaigns of a authority
     function getAuthorityNotCompletedCampaigns()
         public
@@ -421,6 +410,7 @@ contract Authorities {
         ) % length;
         return authorities[authorityId].addr;
     }
+
     // verify if the address is of authority or not
     function isAuthority() public view returns (bool) {
         for (uint i = 0; i < length; i++) {
@@ -430,8 +420,13 @@ contract Authorities {
         }
         return false;
     }
+
     // get the authority details
-    function getAuthorityDetails() public view returns (string memory, string memory) {
+    function getAuthorityDetails()
+        public
+        view
+        returns (string memory, string memory)
+    {
         for (uint i = 0; i < length; i++) {
             if (authorities[i].addr == msg.sender) {
                 return (authorities[i].name, authorities[i].location);
@@ -439,4 +434,3 @@ contract Authorities {
         }
     }
 }
-
