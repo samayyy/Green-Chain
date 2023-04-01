@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Form, Button, Col, Row, Modal, Container } from "react-bootstrap";
+import AlertContext from "../../../context/alert-context";
 
 function AddComplaint(props) {
   const handleClose = () => props.setShow(false);
@@ -10,6 +11,38 @@ function AddComplaint(props) {
   const [town, setTown] = useState("");
   const [date, setDate] = useState("");
   const [image, setImage] = useState(null);
+  const [navError, setNavError] = useState(false);
+
+  const alertContext = useContext(AlertContext);
+
+  const [location, setLocation] = useState(null);
+  useEffect(() => {
+    if (props.show) {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            setLocation(position.coords);
+            // console.log(position);
+          },
+          (error) => {
+            setNavError(true);
+            console.log(error.message);
+          }
+        );
+      } else {
+        console.log("Geolocation is not supported by this browser.");
+      }
+    }
+  }, [props.show]);
+
+  useEffect(() => {
+    if (navError) {
+        alertContext.showAlert("danger", "Error!", `Please provide location permission to use the app!`);
+        props.setShow(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navError, props.show])
+  
 
   const handleIssueTypeChange = (event) => {
     setIssueType(event.target.value);
@@ -48,9 +81,12 @@ function AddComplaint(props) {
       city,
       town,
       date,
+      location
     };
     // Handle form submission here
     console.log(formData);
+    props.setShow(false);
+    alertContext.showAlert("success", "Thank You!", `Complain registered successfully`);
   };
 
   return (

@@ -32,13 +32,11 @@ export const AlertContextProvider = ({ children }) => {
         onHide={handleClose}
         dialogClassName="modal-40w"
       >
-        <Modal.Body>
-          <Alert variant={variant} onClose={() => handleClose()} dismissible>
+          <Alert variant={variant} onClose={() => handleClose()} dismissible className="mb-0">
             <Alert.Heading>{title}</Alert.Heading>
             <hr />
             <p>{desc}</p>
           </Alert>
-        </Modal.Body>
       </Modal>
     </>
   );
