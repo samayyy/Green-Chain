@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import './App.css';
+import "./App.css";
 
 // Pages
 import Home from "./pages/home/home";
@@ -20,7 +20,6 @@ function App() {
         </Routes>
         <Footer />
       </BrowserRouter>
-      
     </div>
   );
 }

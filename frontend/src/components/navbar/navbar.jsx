@@ -1,9 +1,10 @@
-import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import Offcanvas from "react-bootstrap/Offcanvas";
+
+import { ConnectButton } from "web3uikit"
 
 function NavBar() {
   return (
@@ -35,14 +36,8 @@ function NavBar() {
                     <NavDropdown.Item href="#action4">
                       Completed
                     </NavDropdown.Item>
-                    {/* <NavDropdown.Divider />
-                    <NavDropdown.Item href="#action5">
-                    Something else here
-                </NavDropdown.Item> */}
                   </NavDropdown>
-                <Button variant="primary" size="sm">
-                  Connect Wallet
-                </Button>{" "}
+                  <ConnectButton moralisAuth={false} /> {" "}
                 </Nav>
               </Offcanvas.Body>
             </Navbar.Offcanvas>
