@@ -77,13 +77,13 @@ function Home() {
             md={12}
             className="d-flex align-items-center justify-content-center"
           >
-            <div className="text-center">
+            <div className="text-center mb-5">
               <h2>FAQ</h2>
             </div>
           </Col>
         </Row>
         <Row>
-          <Col md={12}>
+          <Col md={12} className="mb-3">
             <Accordion>
               <Accordion.Item eventKey="0">
                 <Accordion.Header>How Does it Work ?</Accordion.Header>
