@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.7;
+pragma solidity 0.8.19;
 
 contract Case {
     struct Campaign {
@@ -9,6 +9,7 @@ contract Case {
         string status;
         string completionImageProof;
         string location;
+        address assignedAuthority;
     }
 
     mapping(uint => Campaign) public campaigns;
@@ -21,10 +22,15 @@ contract Case {
         string _description,
         string _imageProof,
         string _status,
-        string location
+        string _location,
+        address _assignedAuthority
     );
 
-    event LogCampaignVerified(uint indexed _campaignId, string _status);
+    event LogCampaignVerified(
+        uint indexed _campaignId,
+        string _status,
+        address _assignedAuthority
+    );
 
     event LogCampaignResolved(
         uint indexed _campaignId,
@@ -45,16 +51,20 @@ contract Case {
         string memory _name,
         string memory _description,
         string memory _imageProof,
-        string memory _location
+        string memory _location,
+        Authorities _authoritiesContract
     ) public {
         uint campaignId = length++;
+        address assignedAuthority = _authoritiesContract
+            .assignCampaignToAuthority(campaignId);
         campaigns[campaignId] = Campaign(
             _name,
             _description,
             _imageProof,
             "pending",
             "",
-            _location
+            _location,
+            assignedAuthority
         );
         userCampaigns[_userAddress].push(campaignId);
         emit LogCampaignCreated(
@@ -63,15 +73,9 @@ contract Case {
             _description,
             _imageProof,
             "pending",
-            _location
+            _location,
+            assignedAuthority
         );
-        // Authorities authoritiesContract = Authorities(
-        //     "0x5B38Da6a701c568545dCfcB03FcB875f56beddC4"
-        // );
-        // address authority = authoritiesContract.call(
-        //     bytes4(keccak256("assignCampaignToAuthority(uint256)")),
-        //     campaignId
-        // );
     }
 
     function verifyCampaign(uint _campaignId, string memory _status) public {
@@ -80,13 +84,19 @@ contract Case {
             keccak256(abi.encodePacked(campaign.status)) ==
             keccak256(abi.encodePacked("pending"))
         ) {
-            if (
-                keccak256(abi.encodePacked(_status)) ==
-                keccak256(abi.encodePacked("verified")) ||
-                keccak256(abi.encodePacked(_status)) ==
-                keccak256(abi.encodePacked("rejected"))
-            ) {
-                emit LogCampaignVerified(_campaignId, _status);
+            if (campaign.assignedAuthority == msg.sender) {
+                if (
+                    keccak256(abi.encodePacked(_status)) ==
+                    keccak256(abi.encodePacked("verified")) ||
+                    keccak256(abi.encodePacked(_status)) ==
+                    keccak256(abi.encodePacked("rejected"))
+                ) {
+                    emit LogCampaignVerified(
+                        _campaignId,
+                        _status,
+                        campaign.assignedAuthority
+                    );
+                }
             }
         }
     }
@@ -101,14 +111,16 @@ contract Case {
             keccak256(abi.encodePacked(campaign.status)) ==
             keccak256(abi.encodePacked("verified"))
         ) {
-            campaign.status = "resolved";
-            campaign.completionImageProof = _completionImageProof;
-            emit LogCampaignResolved(
-                _campaignId,
-                "resolved",
-                _completionImageProof,
-                _location
-            );
+            if (campaign.assignedAuthority == msg.sender) {
+                campaign.status = "resolved";
+                campaign.completionImageProof = _completionImageProof;
+                emit LogCampaignResolved(
+                    _campaignId,
+                    "resolved",
+                    _completionImageProof,
+                    _location
+                );
+            }
         }
     }
 
@@ -289,6 +301,101 @@ contract Case {
         }
         return completedCampaigns;
     }
+    // get All Pending Campaigns of a authority
+    function getAuthorityPendingCampaigns()
+        public
+        view
+        returns (uint[] memory)
+    {
+        uint[] memory pendingCampaigns = new uint[](length);
+        for (uint i = 0; i < length; i++) {
+            Campaign storage campaign = campaigns[i];
+            if (
+                keccak256(abi.encodePacked(campaign.status)) ==
+                keccak256(abi.encodePacked("pending")) &&
+                campaign.assignedAuthority == msg.sender
+            ) {
+                pendingCampaigns[i] = i;
+            }
+        }
+        return pendingCampaigns;
+    }
+    // get All Verified Campaigns of a authority
+    function getAuthorityVerifiedCampaigns()
+        public
+        view
+        returns (uint[] memory)
+    {
+        uint[] memory verifiedCampaigns = new uint[](length);
+        for (uint i = 0; i < length; i++) {
+            Campaign storage campaign = campaigns[i];
+            if (
+                keccak256(abi.encodePacked(campaign.status)) ==
+                keccak256(abi.encodePacked("verified")) &&
+                campaign.assignedAuthority == msg.sender
+            ) {
+                verifiedCampaigns[i] = i;
+            }
+        }
+        return verifiedCampaigns;
+    }
+    // get All Resolved Campaigns of a authority
+    function getAuthorityResolvedCampaigns()
+        public
+        view
+        returns (uint[] memory)
+    {
+        uint[] memory resolvedCampaigns = new uint[](length);
+        for (uint i = 0; i < length; i++) {
+            Campaign storage campaign = campaigns[i];
+            if (
+                keccak256(abi.encodePacked(campaign.status)) ==
+                keccak256(abi.encodePacked("resolved")) &&
+                campaign.assignedAuthority == msg.sender
+            ) {
+                resolvedCampaigns[i] = i;
+            }
+        }
+        return resolvedCampaigns;
+    }
+    // get All Completed Campaigns of a authority
+    function getAuthorityCompletedCampaigns()
+        public
+        view
+        returns (uint[] memory)
+    {
+        uint[] memory completedCampaigns = new uint[](length);
+        for (uint i = 0; i < length; i++) {
+            Campaign storage campaign = campaigns[i];
+            if (
+                keccak256(abi.encodePacked(campaign.status)) ==
+                keccak256(abi.encodePacked("completed")) &&
+                campaign.assignedAuthority == msg.sender
+            ) {
+                completedCampaigns[i] = i;
+            }
+        }
+        return completedCampaigns;
+    }
+    // get All Not Completed Campaigns of a authority
+    function getAuthorityNotCompletedCampaigns()
+        public
+        view
+        returns (uint[] memory)
+    {
+        uint[] memory notCompletedCampaigns = new uint[](length);
+        for (uint i = 0; i < length; i++) {
+            Campaign storage campaign = campaigns[i];
+            if (
+                keccak256(abi.encodePacked(campaign.status)) ==
+                keccak256(abi.encodePacked("notCompleted")) &&
+                campaign.assignedAuthority == msg.sender
+            ) {
+                notCompletedCampaigns[i] = i;
+            }
+        }
+        return notCompletedCampaigns;
+    }
 }
 
 contract Authorities {
@@ -301,13 +408,9 @@ contract Authorities {
     mapping(uint => Authority) public authorities;
     uint public length;
 
-    function addAuthority(
-        address _addr,
-        string memory _name,
-        string memory _location
-    ) public {
+    function addAuthority(string memory _name, string memory _location) public {
         uint id = length++;
-        authorities[id] = Authority(_addr, _name, _location);
+        authorities[id] = Authority(msg.sender, _name, _location);
     }
 
     function assignCampaignToAuthority(
@@ -318,4 +421,22 @@ contract Authorities {
         ) % length;
         return authorities[authorityId].addr;
     }
+    // verify if the address is of authority or not
+    function isAuthority() public view returns (bool) {
+        for (uint i = 0; i < length; i++) {
+            if (authorities[i].addr == msg.sender) {
+                return true;
+            }
+        }
+        return false;
+    }
+    // get the authority details
+    function getAuthorityDetails() public view returns (string memory, string memory) {
+        for (uint i = 0; i < length; i++) {
+            if (authorities[i].addr == msg.sender) {
+                return (authorities[i].name, authorities[i].location);
+            }
+        }
+    }
 }
+
