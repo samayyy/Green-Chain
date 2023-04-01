@@ -18,9 +18,14 @@ function Login() {
     setShow(true);
   }
 
+  function setUserAsUser (){
+    authCtx.setUserData("user");
+  }
+
   // to check login
   useEffect(() => {
     if (isWeb3Enabled && authCtx.userType === "user") {
+      
       setTimeout(() => {
         navigate("/user-home");
       }, 500);
@@ -47,7 +52,7 @@ function Login() {
           alt="welcome"
           className="welcomeImage mx-auto"
         />
-        <ConnectButton moralisAuth={false} className="mx-auto my-2" />{" "}
+        <div onClick={setUserAsUser}><ConnectButton moralisAuth={false} className="mx-auto my-2" />{" "}</div>
         <Button
           variant="outline-primary"
           type="submit"
