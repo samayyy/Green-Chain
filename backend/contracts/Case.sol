@@ -83,7 +83,7 @@ contract Case {
     ) public {
         uint campaignId = length++;
         Authorities _authoritiesContract = Authorities(
-            0x8d422533b026cBB84Ab7581270C7fEad0b6f627e
+            0x1FcA7b0c0455C41329aA92C21BB7F5A9794C7Bef
         );
         address assignedAuthority = _authoritiesContract
             .assignCampaignToAuthority(
@@ -501,10 +501,10 @@ contract Case {
     }
 
     function claimNftByUserOnCampaignVerification(
-        uint _campaignId,
-        DynamicNFT _dynamicNFT
+        uint _campaignId
     ) public {
         Campaign storage campaign = campaigns[_campaignId];
+        DynamicNFT _dynamicNFT = DynamicNFT(0x713d770eEB8Ab33609FeCf8D80E09Ed7B860B908);
         if (
             keccak256(abi.encodePacked(campaign.status)) ==
             keccak256(abi.encodePacked("verified")) &&
