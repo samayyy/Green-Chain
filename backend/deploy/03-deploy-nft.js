@@ -27,3 +27,4 @@ module.exports = async function (hre) {
     await verify(myContract.address, []);
   }
 };
+module.exports.tags = ["all", "nft"];
