@@ -5,9 +5,9 @@ import "./authority-home.css";
 const statusOptions = ["pending", "approved", "completed"];
 
 const initialArray = [
-  { id: 1, name: "Task 1", status: "pending" },
-  { id: 2, name: "Task 2", status: "approved" },
-  { id: 3, name: "Task 3", status: "completed" },
+  { id: 1, name: "Potholes problem", status: "pending" },
+  { id: 2, name: "Env Problems", status: "approved" },
+  { id: 3, name: "Garbage accumulated Kandivali", status: "pending" },
 ];
 
 function AuthorityHome() {
