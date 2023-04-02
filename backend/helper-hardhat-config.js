@@ -23,7 +23,7 @@ const networkConfig = {
 
 const frontEndContractsFile =
   "../frontend/src/constants/contractAddresses.json";
-const frontEndAbiFile = "../frontend/src/constants/abi.json";
+const frontEndAbiFile = "../frontend/src/constants/";
 
 const developmentChains = ["hardhat", "localhost"];
 

@@ -6,21 +6,22 @@ const fs = require("fs");
 const { network } = require("hardhat");
 
 module.exports = async () => {
-  let CONTRACT = ["Case", "Authorities"];
+  let CONTRACT = ["Case", "Authorities", "DynamicNFT"];
   if (process.env.UPDATE_FRONT_END) {
     for (let contract of CONTRACT) {
       console.log("Writing ", contract, " to front end...");
       await updateContractAddresses(contract);
       await updateAbi(contract);
-      console.log("Front end written!");
     }
+    console.log("Front end written!");
   }
 };
 
 async function updateAbi(contract) {
+  const fileName = contract + "_abi.json";
   const myContract = await ethers.getContract(contract);
   fs.writeFileSync(
-    frontEndAbiFile,
+    frontEndAbiFile + fileName,
     myContract.interface.format(ethers.utils.FormatTypes.json)
   );
 }
