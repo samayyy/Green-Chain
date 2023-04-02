@@ -79,14 +79,17 @@ contract Case {
         string memory _imageProof,
         Location memory _location,
         string memory _addressString,
-        string memory _issueType,
-        Authorities _authoritiesContract
+        string memory _issueType
     ) public {
         uint campaignId = length++;
+        Authorities _authoritiesContract = Authorities(
+            0x8d422533b026cBB84Ab7581270C7fEad0b6f627e
+        );
         address assignedAuthority = _authoritiesContract
             .assignCampaignToAuthority(
                 _addressString
             );
+
         campaigns[campaignId] = Campaign(
             _name,
             _description,
