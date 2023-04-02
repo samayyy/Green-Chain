@@ -83,7 +83,7 @@ contract Case {
     ) public {
         uint campaignId = length++;
         Authorities _authoritiesContract = Authorities(
-            0x1FcA7b0c0455C41329aA92C21BB7F5A9794C7Bef
+            0xaAe7F6312F7948b4171F7960FBfC06fFdA8C3C86
         );
         address assignedAuthority = _authoritiesContract
             .assignCampaignToAuthority(_addressString);
@@ -563,16 +563,14 @@ contract Case {
 
     function addAuthority(
         string memory _name,
-        Location memory _location,
         string memory designation,
         string memory _city
     ) public {
         Authorities _authoritiesContract = Authorities(
-            0x1FcA7b0c0455C41329aA92C21BB7F5A9794C7Bef
+            0xaAe7F6312F7948b4171F7960FBfC06fFdA8C3C86
         );
-        address assignedAuthority = _authoritiesContract.addAuthority(
+        _authoritiesContract.addAuthority(
             _name,
-            _location,
             designation,
             _city
         );
