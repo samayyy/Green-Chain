@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import DataContext from "./dataContext";
 
-import { contractAddresses, abi } from "../../constants";
+import {
+  contractAddresses,
+  case_abi,
+  authorities_abi,
+  dynamicnft_abi,
+} from "../../constants";
 
 import { useWeb3Contract, useMoralis } from "react-moralis";
 import { useNotification } from "web3uikit";
@@ -13,8 +18,11 @@ function DataState({ children }) {
   //Case
   const contract1Address = chainId in addresses ? addresses[chainId][0] : null;
   //Authority
-  const contract2Address = chainId in addresses ? addresses[chainId][0] : null;
+  const contract2Address = chainId in addresses ? addresses[chainId][1] : null;
+  //DynamicNFT
+  const contract3Address = chainId in addresses ? addresses[chainId][2] : null;
   console.log("contract2Address: ", contract2Address);
+  console.log("log: ", authorities_abi);
   const dispatch = useNotification();
 
   const { runContractFunction: createCampaign } = useWeb3Contract();
@@ -22,7 +30,7 @@ function DataState({ children }) {
     console.log("income params: ", _params);
     if (isWeb3Enabled) {
       let options = {
-        abi: abi,
+        abi: case_abi,
         contractAddress: contract1Address,
         functionName: "createCampaign",
         params: _params,
@@ -41,7 +49,7 @@ function DataState({ children }) {
     console.log("income params: ", _params);
     if (isWeb3Enabled) {
       let options = {
-        abi: abi,
+        abi: case_abi,
         contractAddress: contract1Address,
         functionName: "verifyCampaign",
         params: _params,
@@ -60,7 +68,7 @@ function DataState({ children }) {
     console.log("income params: ", _params);
     if (isWeb3Enabled) {
       let options = {
-        abi: abi,
+        abi: case_abi,
         contractAddress: contract1Address,
         functionName: "resolveCampaign",
         params: _params,
@@ -79,7 +87,7 @@ function DataState({ children }) {
     console.log("income params: ", _params);
     if (isWeb3Enabled) {
       let options = {
-        abi: abi,
+        abi: case_abi,
         contractAddress: contract1Address,
         functionName: "completeCampaign",
         params: _params,
@@ -96,7 +104,7 @@ function DataState({ children }) {
   const {
     runContractFunction: getPendingCampaignsByUser, // todo
   } = useWeb3Contract({
-    abi: abi,
+    abi: case_abi,
     contractAddress: contract1Address,
     functionName: "getPendingCampaignsByUser", // todo
     params: {},
@@ -105,7 +113,7 @@ function DataState({ children }) {
   const {
     runContractFunction: getVerifiedCampaignsByUser, // todo
   } = useWeb3Contract({
-    abi: abi,
+    abi: case_abi,
     contractAddress: contract1Address,
     functionName: "getVerifiedCampaignsByUser", // todo
     params: {},
@@ -114,7 +122,7 @@ function DataState({ children }) {
   const {
     runContractFunction: getResolvedCampaignsByUser, // todo
   } = useWeb3Contract({
-    abi: abi,
+    abi: case_abi,
     contractAddress: contract1Address,
     functionName: "getResolvedCampaignsByUser", // todo
     params: {},
@@ -123,7 +131,7 @@ function DataState({ children }) {
   const {
     runContractFunction: getCompletedCampaignsByUser, // todo
   } = useWeb3Contract({
-    abi: abi,
+    abi: case_abi,
     contractAddress: contract1Address,
     functionName: "getCompletedCampaignsByUser", // todo
     params: {},
@@ -132,7 +140,7 @@ function DataState({ children }) {
   const {
     runContractFunction: getNotCompletedCampaignsByUser, // todo
   } = useWeb3Contract({
-    abi: abi,
+    abi: case_abi,
     contractAddress: contract1Address,
     functionName: "getNotCompletedCampaignsByUser", // todo
     params: {},
@@ -141,7 +149,7 @@ function DataState({ children }) {
   const {
     runContractFunction: getRejectedCampaignsByUser, // todo
   } = useWeb3Contract({
-    abi: abi,
+    abi: case_abi,
     contractAddress: contract1Address,
     functionName: "getRejectedCampaignsByUser", // todo
     params: {},
@@ -150,7 +158,7 @@ function DataState({ children }) {
   const {
     runContractFunction: getPendingCampaignsByAuthority, // todo
   } = useWeb3Contract({
-    abi: abi,
+    abi: case_abi,
     contractAddress: contract1Address,
     functionName: "getPendingCampaignsByAuthority", // todo
     params: {},
@@ -159,7 +167,7 @@ function DataState({ children }) {
   const {
     runContractFunction: getVerifiedCampaignsByAuthority, // todo
   } = useWeb3Contract({
-    abi: abi,
+    abi: case_abi,
     contractAddress: contract1Address,
     functionName: "getVerifiedCampaignsByAuthority", // todo
     params: {},
@@ -168,7 +176,7 @@ function DataState({ children }) {
   const {
     runContractFunction: getResolvedCampaignsByAuthority, // todo
   } = useWeb3Contract({
-    abi: abi,
+    abi: case_abi,
     contractAddress: contract1Address,
     functionName: "getCompletedCampaignsByUser", // todo
     params: {},
@@ -177,7 +185,7 @@ function DataState({ children }) {
   const {
     runContractFunction: getCompletedCampaignsByAuthority, // todo
   } = useWeb3Contract({
-    abi: abi,
+    abi: case_abi,
     contractAddress: contract1Address,
     functionName: "getCompletedCampaignsByAuthority", // todo
     params: {},
@@ -186,7 +194,7 @@ function DataState({ children }) {
   const {
     runContractFunction: getNotCompletedCampaignsByAuthority, // todo
   } = useWeb3Contract({
-    abi: abi,
+    abi: case_abi,
     contractAddress: contract1Address,
     functionName: "getNotCompletedCampaignsByAuthority", // todo
     params: {},
@@ -195,7 +203,7 @@ function DataState({ children }) {
   const {
     runContractFunction: getRejectedCampaignsByAuthority, // todo
   } = useWeb3Contract({
-    abi: abi,
+    abi: case_abi,
     contractAddress: contract1Address,
     functionName: "getRejectedCampaignsByAuthority", // todo
     params: {},
@@ -204,7 +212,7 @@ function DataState({ children }) {
   const {
     runContractFunction: claimNftByUserOnCampaignVerification, // todo
   } = useWeb3Contract({
-    abi: abi,
+    abi: case_abi,
     contractAddress: contract1Address,
     functionName: "claimNftByUserOnCampaignVerification", // todo
     params: {},
@@ -216,7 +224,7 @@ function DataState({ children }) {
     console.log("income params: ", _params);
     if (isWeb3Enabled) {
       let options = {
-        abi: abi,
+        abi: case_abi,
         contractAddress: contract1Address,
         functionName: "claimNftByAuthorityOnCampaignCompletion",
         params: _params,
@@ -233,7 +241,7 @@ function DataState({ children }) {
   const {
     runContractFunction: getAllNftTokenIdOfUserOrAuthority, // todo
   } = useWeb3Contract({
-    abi: abi,
+    abi: case_abi,
     contractAddress: contract1Address,
     functionName: "getAllNftTokenIdOfUserOrAuthority", // todo
     params: {},
@@ -245,7 +253,7 @@ function DataState({ children }) {
     console.log("income params: ", _params);
     if (isWeb3Enabled) {
       let options = {
-        abi: abi,
+        abi: authorities_abi,
         contractAddress: contract2Address,
         functionName: "addAuthority",
         params: _params,
@@ -264,7 +272,7 @@ function DataState({ children }) {
     console.log("income params: ", _params);
     if (isWeb3Enabled) {
       let options = {
-        abi: abi,
+        abi: authorities_abi,
         contractAddress: contract2Address,
         functionName: "assignCampaignToAuthority",
         params: _params,
@@ -281,7 +289,7 @@ function DataState({ children }) {
   const {
     runContractFunction: isAuthority, // todo
   } = useWeb3Contract({
-    abi: abi,
+    abi: authorities_abi,
     contractAddress: contract2Address,
     functionName: "isAuthority", // todo
     params: {},
@@ -290,7 +298,7 @@ function DataState({ children }) {
   const {
     runContractFunction: getAuthorityDetails, // todo
   } = useWeb3Contract({
-    abi: abi,
+    abi: authorities_abi,
     contractAddress: contract2Address,
     functionName: "getAuthorityDetails", // todo
     params: {},

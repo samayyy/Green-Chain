@@ -18,7 +18,7 @@ module.exports = async function (hre) {
     log: true,
     waitConfirmations: networkConfig[chainId].blockConfirmations || 0,
   });
-  console.log(`Contract deployed at ${myContract.address}`);
+  console.log(`Authorities Contract deployed at ${myContract.address}`);
   if (
     !developmentChains.includes(network.name) &&
     process.env.ETHERSCAN_API_KEY
@@ -27,3 +27,5 @@ module.exports = async function (hre) {
     await verify(myContract.address, []);
   }
 };
+
+module.exports.tags = ["all", "authority"];

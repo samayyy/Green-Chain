@@ -3,7 +3,7 @@ import { Container, Row, Col, Image, Accordion, Button } from "react-bootstrap";
 import "./home.css";
 // Modal Component
 import AddComplaint from "../../components/modal/add-complaint-modal/add-complaint";
-import dataContext from "../../context/DataContext/dataContext";
+// import dataContext from "../../context/DataContext/dataContext";
 
 const quoteImage =
   "https://www.wallquotes.com/sites/default/files/insp0002_1.png";
@@ -12,7 +12,7 @@ const garbageImage =
 
 function Home() {
   const [show, setShow] = useState(false);
-  const { addAuthorityHelper } = useContext(dataContext)
+  // const { addAuthorityHelper } = useContext(dataContext)
 
   // const temp = async () => {
   //   console.log("hello world");

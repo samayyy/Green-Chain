@@ -12,13 +12,13 @@ module.exports = async function (hre) {
   const chainId = network.config.chainId;
 
   console.log(`Deploying on ${network.name} [${chainId}]...`);
-  const myContract = await deploy("Case", {
+  const myContract = await deploy("DynamicNFT", {
     from: deployer,
     args: [], // if constructor has arguments
     log: true,
     waitConfirmations: networkConfig[chainId].blockConfirmations || 0,
   });
-  console.log(`Case Contract deployed at ${myContract.address}`);
+  console.log(`DynamicNFT Contract deployed at ${myContract.address}`);
   if (
     !developmentChains.includes(network.name) &&
     process.env.ETHERSCAN_API_KEY
@@ -27,5 +27,4 @@ module.exports = async function (hre) {
     await verify(myContract.address, []);
   }
 };
-
-module.exports.tags = ["all", "case"];
+module.exports.tags = ["all", "nft"];
