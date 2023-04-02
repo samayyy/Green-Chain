@@ -22,7 +22,7 @@ function DataState({ children }) {
   //DynamicNFT
   const contract3Address = chainId in addresses ? addresses[chainId][2] : null;
   console.log("contract2Address: ", contract2Address);
-  console.log("log: ", authorities_abi);
+  console.log("contract 2 abi: ", authorities_abi);
   const dispatch = useNotification();
 
   const { runContractFunction: createCampaign } = useWeb3Contract();
