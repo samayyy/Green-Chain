@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Table, Dropdown, DropdownButton, Container } from "react-bootstrap";
-import "./authority-home.css";
+import "./get-campaigns.css";
+import dataContext from "../../context/DataContext/dataContext";
 
 const statusOptions = ["pending", "approved", "completed"];
 
@@ -10,8 +11,9 @@ const initialArray = [
   { id: 3, name: "Task 3", status: "completed" },
 ];
 
-function AuthorityHome() {
+function GetCompletedCampaigns() {
   const [array, setArray] = useState(initialArray);
+  const { getCompletedCampaignsByUser } = useContext(dataContext);
 
   const handleStatusChange = (id, newStatus) => {
     const newArray = array.map((item) => {
@@ -24,10 +26,19 @@ function AuthorityHome() {
     setArray(newArray);
   };
 
+  useEffect(() => {
+    async function fetchData() {
+      // You can await here
+      let data = await getCompletedCampaignsByUser();
+      console.log("campaigns:", data);
+    }
+    fetchData();
+  }, []);
+
   return (
     <div className="authority-home">
       <Container>
-        <h4 className="my-2">Complaints</h4>
+        <h4 className="my-2">My NFT's</h4>
         <Table striped bordered hover>
           <thead>
             <tr>
@@ -65,4 +76,4 @@ function AuthorityHome() {
   );
 }
 
-export default AuthorityHome;
+export default GetCompletedCampaigns;
