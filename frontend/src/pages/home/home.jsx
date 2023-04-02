@@ -4,6 +4,8 @@ import "./home.css";
 // Modal Component
 import AddComplaint from "../../components/modal/add-complaint-modal/add-complaint";
 import dataContext from "../../context/DataContext/dataContext";
+import { useNavigate } from "react-router-dom";
+// import dataContext from "../../context/DataContext/dataContext";
 
 const quoteImage =
   "https://www.wallquotes.com/sites/default/files/insp0002_1.png";
@@ -13,23 +15,29 @@ const garbageImage =
 function Home() {
   const [show, setShow] = useState(false);
   const { addAuthorityHelper } = useContext(dataContext)
+  const navigate = useNavigate();
+  // const { addAuthorityHelper } = useContext(dataContext)
 
-  const temp = async () => {
-    console.log("hello world");
-    console.log("data: ", await addAuthorityHelper({
-      _name: "Kushal",
-      _city: "Mumbai",
-      _designation: "designation",
-    }));
+  // const temp = async () => {
+  //   console.log("hello world");
+  //   console.log("data: ", await addAuthorityHelper({
+  //     _name: "Kushal",
+  //     _city: "Mumbai",
+  //     _designation: "designation",
+  //   }));
 
-  };
-  useEffect(() => {
-    temp();
-  }, []);
+  // };
+  // useEffect(() => {
+  //   temp();
+  // }, []);
 
 
   function registerComplaint() {
     setShow(true);
+  }
+
+  function compEvents() {
+    navigate("/get-completed-campaigns");
   }
 
   return (
@@ -83,7 +91,7 @@ function Home() {
               md={6}
               className="d-flex align-items-center justify-content-center"
             >
-              <Button variant="primary" size="lg" className="my-2">
+              <Button variant="primary" size="lg" className="my-2" onClick={compEvents}>
                 View Completed Events
               </Button>{" "}
             </Col>

@@ -8,6 +8,7 @@ import Login from "./pages/login/login";
 import Home from "./pages/home/home";
 import AuthorityHome from "./pages/authority-home/authority-home";
 import ViewNFT from "./pages/view-nft/view-nft";
+import GetCompletedCampaigns from "./pages/get-completed-campaigns/get-campaigns";
 
 // Components
 import NavBar from "./components/navbar/navbar";
@@ -44,6 +45,14 @@ function App() {
             element={
               <Layout2>
                 <ViewNFT />
+              </Layout2>
+            }
+          />
+          <Route
+            path="/get-completed-campaigns"
+            element={
+              <Layout2>
+                <GetCompletedCampaigns />
               </Layout2>
             }
           />
