@@ -3,6 +3,7 @@ import { Container, Row, Col, Image, Accordion, Button } from "react-bootstrap";
 import "./home.css";
 // Modal Component
 import AddComplaint from "../../components/modal/add-complaint-modal/add-complaint";
+import dataContext from "../../context/DataContext/dataContext";
 import { useNavigate } from "react-router-dom";
 // import dataContext from "../../context/DataContext/dataContext";
 
@@ -13,6 +14,7 @@ const garbageImage =
 
 function Home() {
   const [show, setShow] = useState(false);
+  const { addAuthorityHelper } = useContext(dataContext)
   const navigate = useNavigate();
   // const { addAuthorityHelper } = useContext(dataContext)
 
@@ -20,10 +22,7 @@ function Home() {
   //   console.log("hello world");
   //   console.log("data: ", await addAuthorityHelper({
   //     _name: "Kushal",
-  //     _location: {
-  //       latitude: 12.9716,
-  //       longitude: 77.5946
-  //     },
+  //     _city: "Mumbai",
   //     _designation: "designation",
   //   }));
 

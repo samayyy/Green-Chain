@@ -27,13 +27,12 @@ function GetCompletedCampaigns() {
     });
     setArray(newArray);
   };
-
+  async function fetchData() {
+    // You can await here
+    let data = await getCompletedCampaignsByUser();
+    console.log("campaigns:", data);
+  }
   useEffect(() => {
-    async function fetchData() {
-      // You can await here
-      let data = await getCompletedCampaignsByUser();
-      console.log("campaigns:", data);
-    }
     fetchData();
   }, []);
 
@@ -51,10 +50,10 @@ function GetCompletedCampaigns() {
             </tr>
           </thead>
           <tbody>
-            {array.map((item, index) => (
-              <tr key={item.id}>
+            {array.map((item, key) => (
+              <tr key={key}>
                 <td>{item.id}</td>
-                {index !== 0 ? <td><img style={{width: "280px"}}src={garbage} alt="gb"></img></td> : <td><img src={pothole} style={{width: "280px"}} alt="gb"></img></td>}
+                {index !== 0 ? <td><img style={{ width: "280px" }} src={garbage} alt="gb"></img></td> : <td><img src={pothole} style={{ width: "280px" }} alt="gb"></img></td>}
                 <td>{item.name}</td>
                 <td>
                   <DropdownButton
