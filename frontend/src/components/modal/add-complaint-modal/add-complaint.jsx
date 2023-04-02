@@ -6,6 +6,9 @@ import leaflet from "leaflet";
 import "leaflet/dist/leaflet.css";
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
+import dataContext from "../../../context/DataContext/dataContext";
+// Backend
+// import {createNewCampaign} from ""
 
 function AddComplaint(props) {
   let yourDate = new Date();
@@ -13,9 +16,11 @@ function AddComplaint(props) {
   const [issueType, setIssueType] = useState("");
   const [description, setDescription] = useState("");
   const [address, setAddress] = useState("");
+  const [completeAddress, setCompleteAddress] = useState("");
   const [image, setImage] = useState(null);
   const [navError, setNavError] = useState(false);
   const date = new Date(yourDate).toISOString().split("T")[0];
+  const {createNewCampaign} = useContext(dataContext);
 
   const DefaultIcon = leaflet.icon({
     iconUrl: icon,
@@ -42,6 +47,7 @@ function AddComplaint(props) {
             fetch(apiUrl)
               .then((response) => response.json())
               .then((data) => {
+                setCompleteAddress(data);
                 const address = data.display_name;
                 setAddress(address);
               })
@@ -93,16 +99,21 @@ function AddComplaint(props) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    const locationArray = [location?.latitude.toString(), location?.longitude.toString()];
     const formData = {
-      issueType,
-      description,
-      address,
-      date,
-      location,
-      image,
+      "_name": "garbage collection",
+      "_issueType":issueType,
+      "_description": description,
+      "_addressString": completeAddress.address.city,
+      "_location": locationArray,
+      "_imageProof": image,
     };
+    // Authorities _authoritiesContract
     // Handle form submission here
-    console.log(formData);
+    console.log("fD",formData);
+    // dataCtx.createNewCampaign
+    createNewCampaign(formData);
+    
     props.setShow(false);
     alertContext.showAlert(
       "success",
@@ -137,7 +148,6 @@ function AddComplaint(props) {
               >
                 <option value="">Select an issue type</option>
                 <option value="pothole">Pothole</option>
-                <option value="crime">Crime</option>
                 <option value="garbage">Garbage</option>
               </Form.Control>
             </Form.Group>

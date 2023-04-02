@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Table, Dropdown, DropdownButton, Container } from "react-bootstrap";
-import "./authority-home.css";
+import "./view-nft.css";
 
 const statusOptions = ["pending", "approved", "completed"];
 
@@ -10,7 +10,7 @@ const initialArray = [
   { id: 3, name: "Task 3", status: "completed" },
 ];
 
-function AuthorityHome() {
+function ViewNFT() {
   const [array, setArray] = useState(initialArray);
 
   const handleStatusChange = (id, newStatus) => {
@@ -27,7 +27,7 @@ function AuthorityHome() {
   return (
     <div className="authority-home">
       <Container>
-        <h4 className="my-2">Complaints</h4>
+        <h4 className="my-2">My NFT's</h4>
         <Table striped bordered hover>
           <thead>
             <tr>
@@ -65,4 +65,4 @@ function AuthorityHome() {
   );
 }
 
-export default AuthorityHome;
+export default ViewNFT;
