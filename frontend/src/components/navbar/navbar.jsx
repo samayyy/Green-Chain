@@ -33,6 +33,7 @@ function NavBar() {
               <Offcanvas.Body>
                 <Nav className="justify-content-end flex-grow-1 pe-3">
                   {authCtx.userType === "user" && <Nav.Link href="/user-home">Home</Nav.Link>}
+                  {authCtx.userType === "user" && <Nav.Link href="/view-nft">View NFTs</Nav.Link>}
                   {authCtx.userType === "authority" && <Nav.Link href="/authority-home">Home</Nav.Link>}
                   {/* <Nav.Link href="/authority">Authority</Nav.Link> */}
                   <NavDropdown

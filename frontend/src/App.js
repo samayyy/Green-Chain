@@ -7,12 +7,14 @@ import "./App.css";
 import Login from "./pages/login/login";
 import Home from "./pages/home/home";
 import AuthorityHome from "./pages/authority-home/authority-home";
+import ViewNFT from "./pages/view-nft/view-nft";
 
 // Components
 import NavBar from "./components/navbar/navbar";
 import Footer from "./components/footer/footer";
 import Doc from "./pages/doc";
 import Layout1 from "./layouts/layout1";
+import Layout2 from "./layouts/layout2";
 
 function App() {
   return (
@@ -35,6 +37,14 @@ function App() {
               <Layout1>
                 <AuthorityHome />
               </Layout1>
+            }
+          />
+          <Route
+            path="/view-nft"
+            element={
+              <Layout2>
+                <ViewNFT />
+              </Layout2>
             }
           />
           <Route path="/doc" element={<Doc />} />
