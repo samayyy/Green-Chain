@@ -79,12 +79,13 @@ contract Case {
         string memory _imageProof,
         Location memory _location,
         string memory _addressString,
-        string memory _issueType
+        string memory _issueType,
+        Authorities _authoritiesContract
     ) public {
         uint campaignId = length++;
-        Authorities _authoritiesContract = Authorities(
-            0xaAe7F6312F7948b4171F7960FBfC06fFdA8C3C86
-        );
+        // Authorities _authoritiesContract = Authorities(
+        //     0xaAe7F6312F7948b4171F7960FBfC06fFdA8C3C86
+        // );
         address assignedAuthority = _authoritiesContract
             .assignCampaignToAuthority(_addressString);
 
@@ -498,11 +499,11 @@ contract Case {
         return rejectedCampaigns;
     }
 
-    function claimNftByUserOnCampaignVerification(uint _campaignId) public {
+    function claimNftByUserOnCampaignVerification(uint _campaignId, DynamicNFT _dynamucNFT) public {
         Campaign storage campaign = campaigns[_campaignId];
-        DynamicNFT _dynamicNFT = DynamicNFT(
-            0x713d770eEB8Ab33609FeCf8D80E09Ed7B860B908
-        );
+        // DynamicNFT _dynamicNFT = DynamicNFT(
+        //     0x713d770eEB8Ab33609FeCf8D80E09Ed7B860B908
+        // );
         if (
             keccak256(abi.encodePacked(campaign.status)) ==
             keccak256(abi.encodePacked("verified")) &&
@@ -563,15 +564,16 @@ contract Case {
 
     function addAuthority(
         string memory _name,
-        string memory designation,
-        string memory _city
-    ) public {
-        Authorities _authoritiesContract = Authorities(
-            0xaAe7F6312F7948b4171F7960FBfC06fFdA8C3C86
-        );
-        _authoritiesContract.addAuthority(
+        string memory _designation,
+        string memory _city,
+        Authorities authoritiesContract
+    ) public payable {
+        // Authorities _authoritiesContract = Authorities(
+        //     0xaAe7F6312F7948b4171F7960FBfC06fFdA8C3C86
+        // );
+        authoritiesContract.addAuthority(
             _name,
-            designation,
+            _designation,
             _city
         );
     }
