@@ -85,9 +85,7 @@ contract Case {
         uint campaignId = length++;
         address assignedAuthority = _authoritiesContract
             .assignCampaignToAuthority(
-                campaignId,
-                _location.latitude,
-                _location.longitude
+                _addressString
             );
         campaigns[campaignId] = Campaign(
             _name,
