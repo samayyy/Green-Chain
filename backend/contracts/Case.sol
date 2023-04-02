@@ -499,11 +499,11 @@ contract Case {
         return rejectedCampaigns;
     }
 
-    function claimNftByUserOnCampaignVerification(uint _campaignId) public {
+    function claimNftByUserOnCampaignVerification(uint _campaignId, DynamicNFT _dynamucNFT) public {
         Campaign storage campaign = campaigns[_campaignId];
-        DynamicNFT _dynamicNFT = DynamicNFT(
-            0x713d770eEB8Ab33609FeCf8D80E09Ed7B860B908
-        );
+        // DynamicNFT _dynamicNFT = DynamicNFT(
+        //     0x713d770eEB8Ab33609FeCf8D80E09Ed7B860B908
+        // );
         if (
             keccak256(abi.encodePacked(campaign.status)) ==
             keccak256(abi.encodePacked("verified")) &&
