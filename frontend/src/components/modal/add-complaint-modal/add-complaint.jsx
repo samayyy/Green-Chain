@@ -9,6 +9,11 @@ import iconShadow from "leaflet/dist/images/marker-shadow.png";
 import dataContext from "../../../context/DataContext/dataContext";
 // Backend
 // import {createNewCampaign} from ""
+import { create } from "ipfs-http-client";
+
+const INFURA_ID = "2Np7iR6NoQwDpRffHt1obWRquWr";
+const INFURA_SECRET_KEY = "8bc34689eecdc653d9f4db3aa24935bb";
+
 
 function AddComplaint(props) {
   let yourDate = new Date();
@@ -20,7 +25,8 @@ function AddComplaint(props) {
   const [image, setImage] = useState(null);
   const [navError, setNavError] = useState(false);
   const date = new Date(yourDate).toISOString().split("T")[0];
-  const {createNewCampaign} = useContext(dataContext);
+  const { createNewCampaign } = useContext(dataContext);
+  const [imageResult, setImageResult] = useState(null);
 
   const DefaultIcon = leaflet.icon({
     iconUrl: icon,
@@ -29,7 +35,7 @@ function AddComplaint(props) {
     iconAnchor: [12, 41],
     popupAnchor: [0, -41],
   });
-  
+
   leaflet.Marker.prototype.options.icon = DefaultIcon;
 
   const alertContext = useContext(AlertContext);
@@ -78,8 +84,41 @@ function AddComplaint(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navError, props.show]);
 
+  const auth =
+    "Basic " +
+    Buffer.from(INFURA_ID + ":" + INFURA_SECRET_KEY).toString("base64");
 
+  async function ipfsClient() {
+    const ipfs = await create({
+      host: "ipfs.infura.io",
+      port: 5001,
+      protocol: "https",
+      headers: {
+        authorization: auth, // infura auth credentails
+      },
+    });
+    return ipfs;
+  }
+  async function saveFile(data) {
+    console.log("save file input: ", data);
+    let ipfs = await ipfsClient();
 
+    let options = {
+      wrapWithDirectory: false,
+      progress: (prog) => console.log(`Saved :${prog}`),
+    };
+    let result = await ipfs.add(data, options);
+    console.log("save file output: ", result);
+    return result;
+  }
+
+  async function getData(hash) {
+    console.log("getData input: ", hash);
+    let data = "https://ipfs.io/ipfs/" + hash.toString();
+    data = await fetch(data).then((res) => res.text());
+    console.log("get data output: ", data);
+    return data;
+  }
 
   const handleIssueTypeChange = (event) => {
     setIssueType(event.target.value);
@@ -94,15 +133,29 @@ function AddComplaint(props) {
   };
 
   const handleImageChange = (event) => {
-    setImage(event.target.files[0]);
+    const reader = new FileReader();
+    reader.readAsDataURL(event.target.files[0]);
+    reader.onloadend = () => {
+      setImage(reader.result);
+    };
   };
+
+  useEffect(() => {
+    if (image) {
+      saveFile(image).then((res) => {
+        getData(res["path"]).then((res) => {
+          setImageResult(res);
+        });
+      });
+    }
+  }, [image]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const locationArray = [location?.latitude.toString(), location?.longitude.toString()];
     const formData = {
       "_name": "garbage collection",
-      "_issueType":issueType,
+      "_issueType": issueType,
       "_description": description,
       "_addressString": completeAddress.address.city,
       "_location": locationArray,
@@ -110,10 +163,10 @@ function AddComplaint(props) {
     };
     // Authorities _authoritiesContract
     // Handle form submission here
-    console.log("fD",formData);
+    console.log("fD", formData);
     // dataCtx.createNewCampaign
     createNewCampaign(formData);
-    
+
     props.setShow(false);
     alertContext.showAlert(
       "success",
