@@ -3,6 +3,7 @@ import { Container, Row, Col, Image, Accordion, Button } from "react-bootstrap";
 import "./home.css";
 // Modal Component
 import AddComplaint from "../../components/modal/add-complaint-modal/add-complaint";
+import { useNavigate } from "react-router-dom";
 // import dataContext from "../../context/DataContext/dataContext";
 
 const quoteImage =
@@ -12,6 +13,7 @@ const garbageImage =
 
 function Home() {
   const [show, setShow] = useState(false);
+  const navigate = useNavigate();
   // const { addAuthorityHelper } = useContext(dataContext)
 
   // const temp = async () => {
@@ -33,6 +35,10 @@ function Home() {
 
   function registerComplaint() {
     setShow(true);
+  }
+
+  function compEvents() {
+    navigate("/get-completed-campaigns");
   }
 
   return (
@@ -86,7 +92,7 @@ function Home() {
               md={6}
               className="d-flex align-items-center justify-content-center"
             >
-              <Button variant="primary" size="lg" className="my-2">
+              <Button variant="primary" size="lg" className="my-2" onClick={compEvents}>
                 View Completed Events
               </Button>{" "}
             </Col>
