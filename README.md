@@ -10,3 +10,5 @@
 6. Integrate backend and frontend
 7. Deploy Frontend
 8. Deploy SmartContract
+
+- email alerts - flask
