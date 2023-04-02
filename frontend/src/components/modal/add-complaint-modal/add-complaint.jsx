@@ -2,7 +2,10 @@ import { useState, useEffect, useContext } from "react";
 import { Form, Button, Col, Row, Modal, Container } from "react-bootstrap";
 import AlertContext from "../../../context/alert-context";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import leaflet from "leaflet";
 import "leaflet/dist/leaflet.css";
+import icon from "leaflet/dist/images/marker-icon.png";
+import iconShadow from "leaflet/dist/images/marker-shadow.png";
 
 function AddComplaint(props) {
   let yourDate = new Date();
@@ -14,6 +17,16 @@ function AddComplaint(props) {
   const [navError, setNavError] = useState(false);
   const date = new Date(yourDate).toISOString().split("T")[0];
 
+  const DefaultIcon = leaflet.icon({
+    iconUrl: icon,
+    shadowUrl: iconShadow,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [0, -41],
+  });
+  
+  leaflet.Marker.prototype.options.icon = DefaultIcon;
+
   const alertContext = useContext(AlertContext);
 
   const [location, setLocation] = useState(null);
@@ -23,6 +36,17 @@ function AddComplaint(props) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
             setLocation(position.coords);
+
+            const apiUrl = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${position.coords.latitude}&lon=${position.coords.longitude}`;
+
+            fetch(apiUrl)
+              .then((response) => response.json())
+              .then((data) => {
+                const address = data.display_name;
+                setAddress(address);
+              })
+              .catch((error) => console.error(error));
+
             // console.log(position);
           },
           (error) => {
@@ -47,6 +71,9 @@ function AddComplaint(props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navError, props.show]);
+
+
+
 
   const handleIssueTypeChange = (event) => {
     setIssueType(event.target.value);
@@ -141,20 +168,23 @@ function AddComplaint(props) {
               </Row>
             </Form.Group>
             <p className="my-2"> Your Current Location:</p>
-            {location && location?.latitude && <div className="my-2"><MapContainer
-              center={[location?.latitude, location?.longitude]}
-              zoom={50}
-              style={{ height: "400px", width: "100%"}}
-            >
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
-              <Marker position={[location?.latitude, location?.longitude]}>
-                <Popup>Your current location</Popup>
-              </Marker>
-            </MapContainer>
-            </div>}
+            {location && location?.latitude && (
+              <div className="my-2">
+                <MapContainer
+                  center={[location?.latitude, location?.longitude]}
+                  zoom={50}
+                  style={{ height: "400px", width: "100%" }}
+                >
+                  <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
+                  <Marker position={[location?.latitude, location?.longitude]}>
+                    <Popup>Your current location</Popup>
+                  </Marker>
+                </MapContainer>
+              </div>
+            )}
 
             <Form.Group controlId="date">
               <Form.Label className="my-2">Date</Form.Label>
