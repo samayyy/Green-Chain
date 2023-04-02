@@ -5,21 +5,14 @@ contract Authorities {
     struct Authority {
         address addr;
         string name;
-        Location location;
         string designation;
         string city;
     }
-    struct Location {
-        string latitude;
-        string longitude;
-    }
-
     mapping(uint => Authority) public authorities;
     uint public length;
 
     function addAuthority(
         string memory _name,
-        Location memory _location,
         string memory _designation,
         string memory _city
     ) public {
@@ -27,7 +20,6 @@ contract Authorities {
         authorities[id] = Authority(
             msg.sender,
             _name,
-            _location,
             _designation,
             _city
         );
@@ -63,13 +55,12 @@ contract Authorities {
     function getAuthorityDetails()
         public
         view
-        returns (string memory, Location memory, string memory, string memory)
+        returns (string memory, string memory, string memory)
     {
         for (uint i = 0; i < length; i++) {
             if (authorities[i].addr == msg.sender) {
                 return (
                     authorities[i].name,
-                    authorities[i].location,
                     authorities[i].designation,
                     authorities[i].city
                 );

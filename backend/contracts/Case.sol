@@ -86,9 +86,7 @@ contract Case {
             0x1FcA7b0c0455C41329aA92C21BB7F5A9794C7Bef
         );
         address assignedAuthority = _authoritiesContract
-            .assignCampaignToAuthority(
-                _addressString
-            );
+            .assignCampaignToAuthority(_addressString);
 
         campaigns[campaignId] = Campaign(
             _name,
@@ -500,11 +498,11 @@ contract Case {
         return rejectedCampaigns;
     }
 
-    function claimNftByUserOnCampaignVerification(
-        uint _campaignId
-    ) public {
+    function claimNftByUserOnCampaignVerification(uint _campaignId) public {
         Campaign storage campaign = campaigns[_campaignId];
-        DynamicNFT _dynamicNFT = DynamicNFT(0x713d770eEB8Ab33609FeCf8D80E09Ed7B860B908);
+        DynamicNFT _dynamicNFT = DynamicNFT(
+            0x713d770eEB8Ab33609FeCf8D80E09Ed7B860B908
+        );
         if (
             keccak256(abi.encodePacked(campaign.status)) ==
             keccak256(abi.encodePacked("verified")) &&
@@ -561,5 +559,22 @@ contract Case {
             }
         }
         return tokenIds;
+    }
+
+    function addAuthority(
+        string memory _name,
+        Location memory _location,
+        string memory designation,
+        string memory _city
+    ) public {
+        Authorities _authoritiesContract = Authorities(
+            0x1FcA7b0c0455C41329aA92C21BB7F5A9794C7Bef
+        );
+        address assignedAuthority = _authoritiesContract.addAuthority(
+            _name,
+            _location,
+            designation,
+            _city
+        );
     }
 }
