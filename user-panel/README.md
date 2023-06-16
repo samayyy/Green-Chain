@@ -1,4 +1,4 @@
-# user-panel
+# green-chain-user-panel
 
 ## Build Setup
 
